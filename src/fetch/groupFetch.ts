@@ -5,7 +5,7 @@ export async function fetchChatGroups(token: string) {
     console.log("token", token)
     const res = await fetch(CHAT_GROUP_URL, {
         headers: {
-            Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiU29oYW0gQ2hhdHRvcGFkaHlheSIsImVtYWlsIjoic29oYW1jaGF0dG9wYWRoeWF5MjVAZ21haWwuY29tIiwiaWQiOjQsImlhdCI6MTc0MTQ0Njc5NSwiZXhwIjoxNzQxNTc2Mzk1fQ.pArNf3VfvF83lHIM2dYf3Wd6kOTiFYkCUl7yBHGFwj0",
+            Authorization: token,
         },
         next: {
             tags: ["dashboard"],
@@ -17,6 +17,7 @@ export async function fetchChatGroups(token: string) {
         throw new Error("Failed to fetch data");
     }
     const response = await res.json();
+    console.log("response from fetchGroups", response)
     if (response?.data) {
         return response?.data;
     }
