@@ -5,13 +5,18 @@ export default function ChatNav({
     chatGroup,
     users,
     user,
+    typingUserNames, // Add typingUser prop
+
 }: {
     chatGroup: ChatGroupType;
     users: Array<GroupChatUserType> | [];
     user?: GroupChatUserType;
+    typingUserNames?: string; // Change type
 }) {
+    console.log("typing user fromb chsat nav", typingUserNames)
     return (
         <nav className="w-full flex justify-between items-center  px-6 py-2 border-b">
+
             <div className="flex space-x-4 md:space-x-0 items-center">
                 <div className="md:hidden">
                     <MobileChatSidebar users={users} />
@@ -23,6 +28,8 @@ export default function ChatNav({
                 {/* <p>{new Date(chatGroup.created_at).toDateString()}</p> */}
             </div>
             <p>{user?.name}</p>
+            {typingUserNames && <p>{typingUserNames} is typing...</p>} {/* Display typing indicator */}
+
         </nav>
     );
 }

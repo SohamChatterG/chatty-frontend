@@ -11,8 +11,6 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { Dispatch } from 'react'
-import { SetStateAction } from 'react'
 import { signOut } from "next-auth/react"
 function LogoutModal({ open, setOpen }: { open: boolean, setOpen: (open: boolean) => void }) {
     const handleLogOut = async () => {

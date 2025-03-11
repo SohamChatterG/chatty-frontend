@@ -2,15 +2,24 @@ import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { getSocket } from "@/lib/socket.config";
 import { Input } from "@/components/ui/input";
 import { v4 as uuidv4 } from "uuid";
+import ChatSidebar from "./ChatSidebar";
 export default function Chats({
     group,
     oldMessages,
     chatUser,
+    setActiveUsers, // Add this prop
+    setTypingUsers, // Change setTypingUser to setTypingUsers
+    typingUsers,
 }: {
     group: ChatGroupType;
     oldMessages: Array<MessageType> | [];
     chatUser?: GroupChatUserType;
+    setActiveUsers: (users: GroupChatUserType[]) => void; // Add this prop
+    setTypingUsers: (userIds: string) => void; // Change type
+    typingUsers: string[],
 }) {
+    const [isTyping, setIsTyping] = useState(false);
+
     const [message, setMessage] = useState("");
     const [messages, setMessages] = useState<Array<MessageType>>(oldMessages);
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -22,20 +31,84 @@ export default function Chats({
         const socket = getSocket();
         socket.auth = {
             room: group.id,
+            user: chatUser, // Send user data here
+
         };
         return socket.connect();
-    }, []);
+    }, [group.id, chatUser]);
     useEffect(() => {
         socket.on("message", (data: MessageType) => {
             console.log("The message is", data);
             setMessages((prevMessages) => [...prevMessages, data]);
             scrollToBottom();
         });
+        socket.on("typing", (userNames: string) => { // Update type to string
+            setTypingUsers(userNames);
+        });
+        socket.on("userJoined", (user: GroupChatUserType) => {
+            //@ts-ignore
+            setActiveUsers((prevUsers) => [...prevUsers, user]);
+        });
+
+        socket.on("userLeft", (userId: string) => {
+            //@ts-ignore
+            setActiveUsers((prevUsers: GroupChatUserType[]) => prevUsers.filter((user) => user.id !== userId)); // Explicitly type prevUsers
+        });
+
+        socket.on("activeUsers", (users: GroupChatUserType[]) => {
+            setActiveUsers(users);
+        });
+
+
+
+
+
+        socket.emit("getUsers");
+
+
+
 
         return () => {
+            socket.off("message");
+            socket.off("userJoined");
+            socket.off("userLeft");
+            socket.off("activeUsers");
             socket.close();
+
         };
-    }, []);
+
+    }, [socket, setActiveUsers, setTypingUsers]);
+
+    useEffect(() => {
+        let typingTimeout: NodeJS.Timeout;
+
+        const handleTyping = () => {
+            if (!isTyping) {
+                setIsTyping(true);
+                console.log("typing user", chatUser)
+                socket.emit("typing", chatUser);
+            }
+            clearTimeout(typingTimeout);
+            typingTimeout = setTimeout(() => {
+                setIsTyping(false);
+                socket.emit("stopTyping", chatUser);
+            }, 1000);
+        };
+
+        const inputElement = document.querySelector("input[type='text']");
+        inputElement?.addEventListener("input", handleTyping);
+
+        return () => {
+            clearTimeout(typingTimeout);
+            inputElement?.removeEventListener("input", handleTyping);
+        }
+    }, [isTyping, chatUser, socket]); // Include socket in the dependency array
+    let typingUserNames;
+    useEffect(() => {
+        typingUserNames = typingUsers.join(", "); // Directly join the names
+
+    }, [typingUsers])
+
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
         console.log("Chat User in handlesubmit:", chatUser);
@@ -65,12 +138,13 @@ export default function Chats({
                                 : "bg-gradient-to-r from-gray-200 to-gray-300 text-black self-start"
                                 }`}
                         >
-                            {("msg " + message.name + "chat " + chatUser?.name)}
+                            {/* {("msg " + message.name + "chat " + chatUser?.name+ "\n")} */}
                             {message.message}
                         </div>
                     ))}
                 </div>
             </div>
+            <span>{typingUserNames ? `${typingUserNames} is typing...` : null} </span>{typingUserNames}
             <form onSubmit={handleSubmit} className="mt-2 flex items-center">
                 <input
                     type="text"
