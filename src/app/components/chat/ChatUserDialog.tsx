@@ -60,8 +60,7 @@ export default function ChatUserDialog({
                 toast.error("Something went wrong.please try again!");
             }
         }
-        if (group?.passcode != state.passcode) {
-            console.log("group phbhb", group)
+        if (group?.passcode && group?.passcode !== state.passcode) {
             toast.error("Please enter correct passcode!");
         } else {
             setOpen(false);
@@ -72,9 +71,9 @@ export default function ChatUserDialog({
         <Dialog open={open}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Add Name and Passcode</DialogTitle>
+                    <DialogTitle>Add Name and {group.is_public ? "Join Room" : "Passcode"}</DialogTitle>
                     <DialogDescription>
-                        Add your name and passcode to join in room
+                        Add your name and {group.is_public ? "join the room" : "passcode to join the room"}
                     </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit}>
@@ -85,13 +84,15 @@ export default function ChatUserDialog({
                             onChange={(e) => setState({ ...state, name: e.target.value })}
                         />
                     </div>
-                    <div className="mt-2">
-                        <Input
-                            placeholder="Enter your passcode"
-                            value={state.passcode}
-                            onChange={(e) => setState({ ...state, passcode: e.target.value })}
-                        />
-                    </div>
+                    {!group.is_public && (
+                        <div className="mt-2">
+                            <Input
+                                placeholder="Enter your passcode"
+                                value={state.passcode}
+                                onChange={(e) => setState({ ...state, passcode: e.target.value })}
+                            />
+                        </div>
+                    )}
                     <div className="mt-2">
                         <Button className="w-full">Submit</Button>
                     </div>
