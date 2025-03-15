@@ -15,6 +15,7 @@ async function dashboard() {
             <div>
                 <DashNav name={session?.user?.name ?? "name"} image={session?.user?.image ?? undefined} />
             </div>
+           
             <div className='container'>
                 <div className='flex justify-end mt-10'>
                     <CreateChat user={session?.user} />

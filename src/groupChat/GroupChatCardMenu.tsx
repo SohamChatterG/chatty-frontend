@@ -6,7 +6,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { DotsVerticalIcon } from "@radix-ui/react-icons";
+import { DotsVerticalIcon, Share2Icon } from "@radix-ui/react-icons";
 import dynamic from "next/dynamic";
 import { CustomUser } from "@/app/api/auth/[...nextauth]/options";
 import EditGroupChat from "./EditGroupChat";
@@ -27,6 +27,33 @@ export default function GroupChatCardMenu({
     const handleCopy = () => {
         navigator.clipboard?.writeText(`${Env.APP_URL}/chat/${group.id}`);
         toast.success("Link copied successfully!");
+    };
+
+    const handleShare = async () => {
+        const shareUrl = `${Env.APP_URL}/chat/${group.id}`;
+
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: `Share Chat: ${group.title}`,
+                    url: shareUrl,
+                });
+                toast.success("Shared successfully!");
+            } catch (error: any) {
+                if (error.message === "The user aborted a request.") {
+                    // User cancelled the share, which is fine.
+                } else {
+                    toast.error("Could not share. Please copy the link.");
+                    // Fallback to copy link if Web Share API fails or is not supported
+                    navigator.clipboard?.writeText(shareUrl);
+                    toast.success("Link copied to clipboard!");
+                }
+            }
+        } else {
+            // Web Share API not supported, fallback to copy
+            navigator.clipboard?.writeText(shareUrl);
+            toast.success("Link copied to clipboard!");
+        }
     };
 
     return (
@@ -57,6 +84,10 @@ export default function GroupChatCardMenu({
                     <DotsVerticalIcon className="h-5 w-5" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
+                    <DropdownMenuItem onClick={handleShare}>
+                        <Share2Icon className="mr-2 h-4 w-4" /> {/* Add Share Icon */}
+                        Share
+                    </DropdownMenuItem>
                     <DropdownMenuItem onClick={handleCopy}>Copy</DropdownMenuItem>
                     <DropdownMenuItem onClick={() => setEditDialog(true)}>
                         Edit

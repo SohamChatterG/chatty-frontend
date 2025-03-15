@@ -3,13 +3,17 @@ import { CHAT_GROUP_URL, CHAT_GROUP_USERS_URL } from "@/lib/apiEndpoints";
 export async function fetchChatGroups(token: string) {
     // token = token.split(' ')[1];
     console.log("token", token)
+    if (!token) {
+        console.error("No token provided");
+        return [];
+    }
     const res = await fetch(CHAT_GROUP_URL, {
         headers: {
             Authorization: token,
         },
-        next: {
-            tags: ["dashboard"],
-        },
+        // next: {
+        //     tags: ["dashboard"],
+        // },
     });
 
     if (!res.ok) {
@@ -32,7 +36,7 @@ export async function fetchChatGroup(id: string) {
     const res = await fetch(`${CHAT_GROUP_URL}/${id}`, {
         cache: "no-cache",
     });
-
+    console.log("conosling the response", res)
 
     if (!res.ok) {
         throw new Error("Failed to fetch data");

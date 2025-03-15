@@ -18,8 +18,9 @@ import { toast } from 'sonner';
 import { CHAT_GROUP_URL } from '@/lib/apiEndpoints';
 import { clearCache } from '@/actions/common';
 function CreateChat({ user }: { user: CustomUser }) {
-  console.log("user", user)
   const [loading, setLoading] = useState(false)
+  const [isPublic, setIsPublic] = useState(false); // Add state for public/private
+
   const {
     register,
     handleSubmit,
@@ -29,8 +30,9 @@ function CreateChat({ user }: { user: CustomUser }) {
   });
   const onSubmit = async (payload: createChatSchemaType) => {
     try {
+      console.log("handle submit clicked!")
       setLoading(true);
-      const { data } = await axios.post(CHAT_GROUP_URL, { ...payload, user_id: user.id }, {
+      const { data } = await axios.post(CHAT_GROUP_URL, { ...payload, user_id: user.id, is_public: isPublic }, {
         headers: {
           Authorization: user.token
         }
@@ -43,7 +45,6 @@ function CreateChat({ user }: { user: CustomUser }) {
       }
 
     } catch (error) {
-      console.log("uhuh")
       setLoading(false);
       if (error instanceof AxiosError) {
         toast.error(error.message)
@@ -68,10 +69,26 @@ function CreateChat({ user }: { user: CustomUser }) {
               <Input placeholder="Enter chat title" {...register("title")} />
               <span className="text-red-400">{errors.title?.message}</span>
             </div>
+
             <div className="mt-4">
-              <Input placeholder="Enter passcode" {...register("passcode")} />
-              <span className="text-red-400">{errors.passcode?.message}</span>
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={isPublic}
+                  onChange={(e) => setIsPublic(e.target.checked)}
+                  className="mr-2"
+                />
+                Public Group
+              </label>
             </div>
+            {
+              !isPublic && ( // Conditionally render passcode input
+                <div className="mt-4">
+                  <Input placeholder="Enter passcode" {...register("passcode")} />
+                  <span className="text-red-400">{errors.passcode?.message}</span>
+                </div>
+              )
+            }
             <div className="mt-4">
               <Button className="w-full" disabled={loading}>
                 {loading ? "Processing..." : "Submit"}
@@ -82,6 +99,46 @@ function CreateChat({ user }: { user: CustomUser }) {
       </Dialog>
 
     </div>
+    // <div>
+    //   <Dialog open={open} onOpenChange={setOpen}>
+    //     <DialogTrigger asChild>
+    //       <Button>Create Chat</Button>
+    //     </DialogTrigger>
+    //     <DialogContent onInteractOutside={(e) => e.preventDefault()}>
+    //       <DialogHeader>
+    //         <DialogTitle>Create your new Chat</DialogTitle>
+    //       </DialogHeader>
+    //       <form onSubmit={handleSubmit(onSubmit)}>
+    //         <div className="mt-4">
+    //           <Input placeholder="Enter chat title" {...register("title")} />
+    //           <span className="text-red-400">{errors.title?.message}</span>
+    //         </div>
+    //         <div className="mt-4">
+    //           <label className="flex items-center">
+    //             <input
+    //               type="checkbox"
+    //               checked={isPublic}
+    //               onChange={(e) => setIsPublic(e.target.checked)}
+    //               className="mr-2"
+    //             />
+    //             Public Group
+    //           </label>
+    //         </div>
+    //         {!isPublic && ( // Conditionally render passcode input
+    //           <div className="mt-4">
+    //             <Input placeholder="Enter passcode" {...register("passcode")} />
+    //             <span className="text-red-400">{errors.passcode?.message}</span>
+    //           </div>
+    //         )}
+    //         <div className="mt-4">
+    //           <Button className="w-full" disabled={loading}>
+    //             {loading ? "Processing..." : "Submit"}
+    //           </Button>
+    //         </div>
+    //       </form>
+    //     </DialogContent>
+    //   </Dialog>
+    // </div>
   )
 }
 
