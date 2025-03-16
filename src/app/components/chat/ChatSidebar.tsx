@@ -12,7 +12,6 @@ export default function ChatSidebar({
     return (
         <div className=" md:block h-screen overflow-y-scroll w-1/5 bg-muted px-2">
             <div className="mb-4"> {/* Add a container for All Users */}
-                hi
                 <h1 className="text-2xl font-extrabold py-4 ">Users</h1>
                 {users?.length > 0 &&
                     users.map((item, index) => (

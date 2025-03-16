@@ -23,9 +23,11 @@ export default function GroupChatCard({
                 <GroupChatCardMenu user={user} group={group} />
             </CardHeader>
             <CardContent>
-                <p>
-                    Passcode :-<strong>{group.passcode}</strong>
-                </p>
+                {group.passcode ?
+                    <p>
+                        Passcode :-<strong>******</strong>
+                    </p> : null
+                }
                 <p>Created At :-{new Date(group.created_at).toDateString()}</p>
             </CardContent>
         </Card>

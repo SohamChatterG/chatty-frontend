@@ -36,7 +36,7 @@ export async function fetchChatGroup(id: string) {
     const res = await fetch(`${CHAT_GROUP_URL}/${id}`, {
         cache: "no-cache",
     });
-    console.log("conosling the response", res)
+
 
     if (!res.ok) {
         throw new Error("Failed to fetch data");

@@ -7,7 +7,7 @@ import { fetchChatGroups } from '@/fetch/groupFetch'
 import GroupChatCard from '@/groupChat/GroupChatCard'
 async function dashboard() {
     const session: CustomSession | null = await getServerSession(authOptions)
-    console.log("session", session)
+    console.log("something", session)
     const groups: Array<ChatGroupType> = await fetchChatGroups(session?.user?.token)
 
     return (

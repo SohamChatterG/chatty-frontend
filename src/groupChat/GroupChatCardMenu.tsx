@@ -6,24 +6,27 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { DotsVerticalIcon, Share2Icon } from "@radix-ui/react-icons";
+import { DotsVerticalIcon, Share2Icon, CopyIcon } from "@radix-ui/react-icons";
 import dynamic from "next/dynamic";
 import { CustomUser } from "@/app/api/auth/[...nextauth]/options";
 import EditGroupChat from "./EditGroupChat";
 import { toast } from "sonner";
 import Env from "@/lib/env";
+import { Delete, DeleteIcon, Edit, LucideDelete, Trash } from "lucide-react";
 const DeleteChatGroup = dynamic(() => import("./DeleteChatGroup"));
 
 export default function GroupChatCardMenu({
     group,
     user,
+    from
 }: {
     group: ChatGroupType;
     user: CustomUser;
+    from?: string
 }) {
     const [deleteDialog, setDeleteDialog] = useState(false);
     const [editDialoag, setEditDialog] = useState(false);
-
+    console.log("consoling from", from)
     const handleCopy = () => {
         navigator.clipboard?.writeText(`${Env.APP_URL}/chat/${group.id}`);
         toast.success("Link copied successfully!");
@@ -85,16 +88,28 @@ export default function GroupChatCardMenu({
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                     <DropdownMenuItem onClick={handleShare}>
-                        <Share2Icon className="mr-2 h-4 w-4" /> {/* Add Share Icon */}
+                        <Share2Icon className="mr-2 h-4 w-4" />
                         Share
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleCopy}>Copy</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setEditDialog(true)}>
-                        Edit
+                    <DropdownMenuItem onClick={handleCopy}>
+                        <CopyIcon className="mr-2 h-4 w-4" />
+
+                        Copy
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setDeleteDialog(true)}>
-                        Delete
-                    </DropdownMenuItem>
+                    {from && from?.length && (
+                        <>
+                            <DropdownMenuItem onClick={() => setEditDialog(true)}>
+                                <Edit className="mr-2 h-4 w-4" />
+
+                                Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setDeleteDialog(true)}>
+                                <Trash className="mr-2 h-4 w-4" /> {/* Add Share Icon */}
+
+                                Delete
+                            </DropdownMenuItem>
+                        </>
+                    )}
                 </DropdownMenuContent>
             </DropdownMenu>
         </>

@@ -85,10 +85,10 @@ export default function EditGroupChat({
                         <Input placeholder="Enter chat title" {...register("title")} />
                         <span className="text-red-400">{errors.title?.message}</span>
                     </div>
-                    <div className="mt-4">
+                    {!group.is_public && <div className="mt-4">
                         <Input placeholder="Enter passcode" {...register("passcode")} />
                         <span className="text-red-400">{errors.passcode?.message}</span>
-                    </div>
+                    </div>}
                     <div className="mt-4">
                         <Button className="w-full" disabled={loading}>
                             {loading ? "Processing.." : "Submit"}
