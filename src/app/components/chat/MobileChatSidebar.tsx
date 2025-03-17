@@ -11,8 +11,11 @@ import { HamburgerMenuIcon } from "@radix-ui/react-icons";
 
 export default function MobileChatSidebar({
     users,
+    activeUsers
 }: {
     users: Array<GroupChatUserType> | [];
+    activeUsers: Array<GroupChatUserType> | []; // Add activeUsers type
+
 }) {
     return (
         <Sheet>
@@ -34,6 +37,20 @@ export default function MobileChatSidebar({
                                 </p>
                             </div>
                         ))}
+                </div>
+                <SheetHeader>
+                    <SheetTitle className="text-2xl font-bold">Active Users</SheetTitle>
+                </SheetHeader>
+                <div> {/* Add a container for Active Users */}
+                    {activeUsers?.length > 0 ? (
+                        activeUsers.map((user, index) => (
+                            <div key={index} className="bg-white rounded-md p-2 mt-2">
+                                <p className="font-bold"> {user.name}</p>
+                            </div>
+                        ))
+                    ) : (
+                        <p className="text-gray-500">No active users</p>
+                    )}
                 </div>
             </SheetContent>
         </Sheet>

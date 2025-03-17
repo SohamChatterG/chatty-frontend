@@ -39,7 +39,7 @@ function ChatBase({ users, group, oldMessages }: { group: ChatGroupType, users: 
             <ChatSidebar users={users} activeUsers={activeUsers} />
 
             <div className='w-full md:w-4/5 bg-gradient-to-b from-gray-50 to-white'>
-                {open ? <ChatUserDialog open={open} setOpen={setOpen} group={group} /> : <ChatNav chatGroup={group} users={users} user={chatUser}></ChatNav>}
+                {open ? <ChatUserDialog open={open} setOpen={setOpen} group={group} /> : <ChatNav chatGroup={group} users={users} user={chatUser} activeUsers={activeUsers}></ChatNav>}
                 {/* <ChatSidebar users={users} activeUsers={activeUsers} /> */}
                 <Chats group={group} chatUser={chatUser} oldMessages={oldMessages} setActiveUsers={setActiveUsers} setTypingUser={setTypingUser} typingUser={typingUser} ></Chats>
             </div>

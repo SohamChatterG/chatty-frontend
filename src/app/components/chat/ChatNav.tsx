@@ -7,11 +7,12 @@ export default function ChatNav({
     chatGroup,
     users,
     user,
-
+    activeUsers
 }: {
     chatGroup: ChatGroupType;
     users: Array<GroupChatUserType> | [];
     user?: GroupChatUserType;
+    activeUsers: Array<GroupChatUserType> | []; // Add activeUsers type
 }) {
     const [session, setSession] = useState<CustomSession | null>(null);
     useEffect(() => {
@@ -32,7 +33,7 @@ export default function ChatNav({
 
             <div className="flex space-x-4 md:space-x-0 items-center">
                 <div className="md:hidden">
-                    <MobileChatSidebar users={users} />
+                    <MobileChatSidebar users={users} activeUsers={activeUsers} />
                 </div>
 
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-pink-400 to-purple-600 text-transparent bg-clip-text">
