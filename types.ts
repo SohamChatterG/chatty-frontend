@@ -4,7 +4,7 @@ type ChatGroupType = {
     title: string,
     passcode?: string,
     created_at: string,
-    is_public: boolean
+    is_public: boolean,
 }
 
 type GroupChatUserType = {
@@ -12,7 +12,8 @@ type GroupChatUserType = {
     name: string,
     group_id: string,
     created_at: string,
-
+    is_admin: boolean,
+    user_id?: number
 }
 
 type MessageType = {

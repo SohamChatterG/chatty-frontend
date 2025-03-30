@@ -10,7 +10,7 @@ import FooterDashboard from "../components/base/FooterDashboard";
 
 async function Dashboard() {
     const session: CustomSession | null = await getServerSession(authOptions);
-    const groups: Array<ChatGroupType> = await fetchChatGroups(session?.user?.token);
+    const groups: Array<ChatGroupType> = await fetchChatGroups(session?.user?.token as string);
 
     return (
         <div className="min-h-screen bg-gradient-to-r from-gray-900 to-gray-800 text-white">

@@ -17,7 +17,7 @@ import axios, { AxiosError } from 'axios';
 import { toast } from 'sonner';
 import { CHAT_GROUP_URL } from '@/lib/apiEndpoints';
 import { clearCache } from '@/actions/common';
-function CreateChat({ user }: { user: CustomUser }) {
+function CreateChat({ user }: { user?: CustomUser }) {
   const [loading, setLoading] = useState(false)
   const [isPublic, setIsPublic] = useState(false);
 
@@ -32,9 +32,9 @@ function CreateChat({ user }: { user: CustomUser }) {
     try {
       console.log("handle submit clicked!")
       setLoading(true);
-      const { data } = await axios.post(CHAT_GROUP_URL, { ...payload, user_id: user.id, is_public: isPublic }, {
+      const { data } = await axios.post(CHAT_GROUP_URL, { ...payload, user_id: user?.id, is_public: isPublic }, {
         headers: {
-          Authorization: user.token
+          Authorization: user?.token
         }
       })
       if (data?.message) {

@@ -1,51 +1,92 @@
 "use client"
-import { getSocket } from '@/lib/socket.config'
 import React, { useEffect, useMemo, useState } from 'react'
-import { v4 as uuid } from "uuid"
-import { Button } from '@/components/ui/button'
 import ChatSidebar from './ChatSidebar'
 import ChatNav from './ChatNav'
 import ChatUserDialog from './ChatUserDialog'
 import Chats from './Chats'
+import { CustomSession } from '@/app/api/auth/[...nextauth]/options'
 function ChatBase({ users, group, oldMessages }: { group: ChatGroupType, users: Array<GroupChatUserType> | [], oldMessages: Array<MessageType> | [] }) {
     const [typingUser, setTypingUser] = useState<string>(""); // Add typingUsers state
 
     const [open, setOpen] = useState(true);
-    console.log("group", group)
     const [chatUser, setChatUser] = useState<GroupChatUserType>();
     const [activeUsers, setActiveUsers] = useState<GroupChatUserType[]>([]); // Add activeUsers state
+    const [isMediumScreen, setIsMediumScreen] = useState(false);
+    const [session, setSession] = useState<CustomSession | null>(null);
 
     if (typeof window !== 'undefined') {
         const data = localStorage.getItem(group.id);
-        console.log("loc store", data)
     }
 
     useEffect(() => {
+        const handleResize = () => {
+            setIsMediumScreen(window.innerWidth >= 768);
+        };
+
+        handleResize(); // Set initial value
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+
+    useEffect(() => {
         const data = localStorage.getItem(group.id);
-        console.log("loc store", data)
-        if (data && data !== "undefined" && data !== null) { // Added checks for null and undefined
+        if (data && data !== "undefined" && data !== null) {
             try {
                 const pData = JSON.parse(data);
                 setChatUser(pData);
             } catch (error) {
                 console.error("Error parsing JSON:", error);
-                // Handle the error (e.g., show a message to the user)
             }
         }
-    }, [group.id]); // Added group.id as a dependency
-    console.log("active users", activeUsers)
+    }, [group.id]);
+    useEffect(() => {
+        const fetchSession = async () => {
+            try {
+                const res = await fetch("/api/session");
+                const data = await res.json();
+                setSession(data);
+            } catch (error) {
+                console.error("Error fetching session:", error);
+            }
+        };
+        fetchSession();
+    }, []);
     return (
-        <div className='flex'>
-            <ChatSidebar users={users} activeUsers={activeUsers} />
+        <div className="flex h-screen">
+            {/* Sidebar: Only visible when screen width >= md */}
+            {isMediumScreen && (
+                <div className="w-1/4 bg-gray-100 border-r">
+                    <ChatNav chatGroup={group} users={users} user={chatUser} activeUsers={activeUsers} session={session} />
+                </div>
+            )}
 
-            <div className='w-full md:w-4/5 bg-gradient-to-b from-gray-50 to-white'>
-                {open ? <ChatUserDialog open={open} setOpen={setOpen} group={group} /> : <ChatNav chatGroup={group} users={users} user={chatUser} activeUsers={activeUsers}></ChatNav>}
-                {/* <ChatSidebar users={users} activeUsers={activeUsers} /> */}
-                <Chats group={group} chatUser={chatUser} oldMessages={oldMessages} setActiveUsers={setActiveUsers} setTypingUser={setTypingUser} typingUser={typingUser} ></Chats>
+            {/* Main Chat Area */}
+            <div className={`${isMediumScreen ? "w-3/4" : "w-full"} bg-white`}>
+                {/* On smaller screens, show ChatUserDialog first */}
+                {!isMediumScreen && open ? (
+                    <ChatUserDialog open={open} setOpen={setOpen} group={group} user={session?.user} users={users} />
+                ) : (
+                    <>
+                        {/* On large screens, ChatNav is already shown separately, so only Chats should be displayed here */}
+                        {!isMediumScreen && (
+                            <ChatNav chatGroup={group} users={users} user={chatUser} activeUsers={activeUsers} session={session} />
+                        )}
+                        <Chats
+                            group={group}
+                            chatUser={chatUser}
+                            oldMessages={oldMessages}
+                            setActiveUsers={setActiveUsers}
+                            setTypingUser={setTypingUser}
+                            typingUser={typingUser}
+                        />
+                    </>
+                )}
             </div>
-
         </div>
-    )
+    );
+
+
 }
 
 export default ChatBase

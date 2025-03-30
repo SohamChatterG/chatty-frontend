@@ -3,6 +3,8 @@ import { getSocket } from "@/lib/socket.config";
 import { Input } from "@/components/ui/input";
 import { v4 as uuidv4 } from "uuid";
 import ChatSidebar from "./ChatSidebar";
+import { useParams } from "next/navigation";
+import { toast } from "sonner";
 export default function Chats({
     group,
     oldMessages,
@@ -18,6 +20,8 @@ export default function Chats({
     setTypingUser: (userName: string) => void; // Change type
     typingUser: string,
 }) {
+    const params = useParams();
+
     const [isTyping, setIsTyping] = useState(false);
     console.log("typing users as prop", typingUser)
     const [message, setMessage] = useState("");
@@ -62,21 +66,28 @@ export default function Chats({
         socket.on("activeUsers", (users: GroupChatUserType[]) => {
             setActiveUsers(users);
         });
+        socket.on("removedFromGroup", () => {
+            console.log("You have been removed from the group.");
 
+            const groupId = params["id"] as string | undefined;
 
+            if (groupId) {
+                localStorage.removeItem(groupId);
+            }
 
+            toast.error("You have been removed from the group.");
+            window.location.href = "/"; // Redirect user
+        });
 
 
         socket.emit("getUsers");
-
-
-
-
         return () => {
             socket.off("message");
             socket.off("userJoined");
             socket.off("userLeft");
             socket.off("activeUsers");
+            socket.off("removedFromGroup");
+
             socket.close();
 
         };
