@@ -1,26 +1,3 @@
-// "use client"
-// import React from "react";
-// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-// import { CustomUser } from "@/app/api/auth/[...nextauth]/options";
-// import GroupChatCardMenu from "./GroupChatCardMenu";
-// import { useRouter } from "next/navigation"; // Import useRouter
-
-// export function GroupChatCard({ group, user }: { group: ChatGroupType; user: CustomUser }) {
-//     const router = useRouter();
-//     const handleCardClick = () => router.push(`/chat/${group.id}`);
-
-//     return (
-//         <div onClick={handleCardClick} className="cursor-pointer bg-gray-800 p-6 rounded-2xl shadow-md hover:shadow-xl transform hover:scale-105 transition-all">
-//             <div className="flex justify-between items-center">
-//                 <h3 className="text-xl font-semibold text-white">{group.title}</h3>
-//                 <GroupChatCardMenu user={user} group={group} />
-//             </div>
-//             <p className="text-gray-400 text-sm mt-2">{group.passcode ? "Passcode: ******" : "No Passcode"}</p>
-//             <p className="text-gray-500 text-xs mt-1">Created on {new Date(group.created_at).toDateString()}</p>
-//         </div>
-//     );
-// }
-
 "use client"
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

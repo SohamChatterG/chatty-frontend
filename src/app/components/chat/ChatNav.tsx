@@ -51,10 +51,16 @@ export default function ChatNav({
                 )}
 
                 {/* Team Name */}
-                <div className="flex flex-col">
-                    <h1 className="text-xl font-bold text-gray-800">{chatGroup?.title}</h1>
-                    <p className="text-xs text-gray-500">Team Chat</p>
+                <div className="flex">
+
+
+                    <div className="flex flex-col">
+                        <h1 className="text-xl font-bold text-gray-800">{chatGroup?.title}</h1>
+                        <p className="text-xs text-gray-500">Team Chat</p>
+                    </div>
+                    <GroupChatCardMenu group={chatGroup} user={session?.user} from="chatNav" />
                 </div>
+
             </div>
 
             {/* User Badge */}
