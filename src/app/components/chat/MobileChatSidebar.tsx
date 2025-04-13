@@ -30,21 +30,50 @@ export default function MobileChatSidebar({
 }) {
     const [open, setOpen] = useState(false);
 
-    const handleRemoveUser = async (userId: string) => {
-        try {
-            //@ts-ignore
-            await removeUser(user?.token, userId, groupId);
-            toast.success("User removed from group!");
-            setOpen(false);
-            const updatedUsers = await fetchChatGroupUsers(groupId);
-            setUsers(updatedUsers);
-        } catch (error) {
+    // const handleRemoveUser = async (userId: string) => {
+    //     try {
+    //         //@ts-ignore
+    //         await removeUser(user?.token, userId, groupId);
+    //         toast.success("User removed from group!");
+    //         setOpen(false);
+    //         const updatedUsers = await fetchChatGroupUsers(groupId);
+    //         setUsers(updatedUsers);
+    //     } catch (error) {
 
+    //         console.error(error);
+    //         toast.error("Failed to remove user");
+    //     }
+    // };
+    const handleRemoveUser = async (targetId: string) => {
+        try {
+            const response = await removeUser(
+                user?.token as string,
+                targetId,
+                groupId,
+                user?.id as string
+            );
+
+            if (response.isSelfRemoval) {
+                // If user removed themselves
+                toast.success(response.message || "You have left the group!");
+                // Remove group details from local storage
+                localStorage.removeItem(groupId);
+                // Redirect to dashboard after a short delay
+                setTimeout(() => {
+                    window.location.href = '/dashboard';
+                }, 1000);
+            } else {
+                toast.success(response.message || "User removed from group!");
+                const updatedUsers = await fetchChatGroupUsers(groupId);
+                setUsers(updatedUsers);
+            }
+
+            setOpen(false);
+        } catch (error) {
             console.error(error);
-            toast.error("Failed to remove user");
+            toast.error(error instanceof Error ? error.message : "Failed to remove user");
         }
     };
-
     const handleMakeAdmin = async (targetId: string, is_admin: boolean) => {
         try {
             //@ts-ignore
@@ -74,8 +103,6 @@ export default function MobileChatSidebar({
             }
         }
     };
-    console.log("user", user);
-    console.log("users", users)
     return (
         <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>

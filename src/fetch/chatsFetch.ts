@@ -45,18 +45,32 @@ export async function makeAdmin(
     return await res.json();
 }
 
-export async function removeUser(token: string, userId: string, groupId: string) {
+export async function removeUser(
+    token: string,
+    targetId: string,
+    groupId: string,
+    requestedById: string
+): Promise<{
+    success: boolean;
+    isSelfRemoval: boolean;
+    message: string;
+}> {
     const res = await fetch(REMOVE_MEMBER, {
         method: "DELETE",
         headers: {
             "Content-Type": "application/json",
             authorization: token,
         },
-        body: JSON.stringify({ user_id: userId, group_id: groupId }),
+        body: JSON.stringify({
+            targetId,
+            group_id: groupId,
+            requestedById
+        }),
     });
 
     if (!res.ok) {
-        throw new Error("Failed to remove user");
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.message || "Failed to remove user");
     }
 
     return await res.json();
