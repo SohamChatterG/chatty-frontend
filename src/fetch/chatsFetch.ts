@@ -16,14 +16,26 @@ export async function fetchChats(groupId: string) {
     return [];
 }
 
-export async function makeAdmin(token: string, userId: string, groupId: string) {
+export async function makeAdmin(
+    token: string,
+    targetId: string,
+    groupId: string,
+    is_admin: boolean,
+    adminId: string
+) {
+    console.log(token + targetId + groupId + is_admin + adminId)
     const res = await fetch(CHAT_GROUP_ADMIN, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            Authorization: token,
+            authorization: token,
         },
-        body: JSON.stringify({ user_id: userId, group_id: groupId }),
+        body: JSON.stringify({
+            targetId,
+            groupId,
+            is_admin,
+            adminId,
+        }),
     });
 
     if (!res.ok) {
@@ -38,7 +50,7 @@ export async function removeUser(token: string, userId: string, groupId: string)
         method: "DELETE",
         headers: {
             "Content-Type": "application/json",
-            Authorization: token,
+            authorization: token,
         },
         body: JSON.stringify({ user_id: userId, group_id: groupId }),
     });

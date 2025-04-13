@@ -30,11 +30,11 @@ function CreateChat({ user }: { user?: CustomUser }) {
   });
   const onSubmit = async (payload: createChatSchemaType) => {
     try {
-      console.log("handle submit clicked!")
+      console.log("handle submit clicked for creating grp", user)
       setLoading(true);
       const { data } = await axios.post(CHAT_GROUP_URL, { ...payload, user_id: user?.id, is_public: isPublic }, {
         headers: {
-          Authorization: user?.token
+          authorization: user?.token
         }
       })
       if (data?.message) {

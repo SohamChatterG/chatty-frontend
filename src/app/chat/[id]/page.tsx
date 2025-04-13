@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import React from 'react'
 import { fetchChats } from '@/fetch/chatsFetch'
 async function chat({ params }: { params: { id: string } }) {
+
     if (params.id.length !== 36) {
         return notFound()
     }
@@ -12,10 +13,11 @@ async function chat({ params }: { params: { id: string } }) {
         return notFound()
     }
     const chats: Array<MessageType> | [] = await fetchChats(params.id)
+
     const user: Array<GroupChatUserType> | [] = await fetchChatGroupUsers(params.id);
     return (
         <div>
-            <ChatBase users={user} group={group} oldMessages={chats} />
+            <ChatBase fetchedUsers={user} group={group} oldMessages={chats} />
         </div>
     )
 }

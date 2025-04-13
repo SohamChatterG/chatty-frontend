@@ -5,9 +5,9 @@ import ChatNav from './ChatNav'
 import ChatUserDialog from './ChatUserDialog'
 import Chats from './Chats'
 import { CustomSession } from '@/app/api/auth/[...nextauth]/options'
-function ChatBase({ users, group, oldMessages }: { group: ChatGroupType, users: Array<GroupChatUserType> | [], oldMessages: Array<MessageType> | [] }) {
+function ChatBase({ fetchedUsers, group, oldMessages }: { group: ChatGroupType, fetchedUsers: Array<GroupChatUserType> | [], oldMessages: Array<MessageType> | [] }) {
     const [typingUser, setTypingUser] = useState<string>(""); // Add typingUsers state
-
+    const [users, setUsers] = useState<Array<GroupChatUserType> | []>(fetchedUsers); // Initialize users state with fetchedUsers
     const [open, setOpen] = useState(true);
     const [chatUser, setChatUser] = useState<GroupChatUserType>();
     const [activeUsers, setActiveUsers] = useState<GroupChatUserType[]>([]); // Add activeUsers state
@@ -39,7 +39,7 @@ function ChatBase({ users, group, oldMessages }: { group: ChatGroupType, users: 
                 console.error("Error parsing JSON:", error);
             }
         }
-    }, [group.id]);
+    }, [group.id, users]);
     useEffect(() => {
         const fetchSession = async () => {
             try {
@@ -52,37 +52,47 @@ function ChatBase({ users, group, oldMessages }: { group: ChatGroupType, users: 
         };
         fetchSession();
     }, []);
+
+
+
     return (
         <div className="flex h-screen">
-            {/* Sidebar: Only visible when screen width >= md */}
+            {/* Sidebar for large screens */}
             {isMediumScreen && (
                 <div className="w-1/4 bg-gray-100 border-r">
-                    <ChatNav chatGroup={group} users={users} user={chatUser} activeUsers={activeUsers} session={session} />
+                    <ChatNav chatGroup={group} users={users} user={chatUser} activeUsers={activeUsers} session={session} setUsers={setUsers} />
                 </div>
             )}
 
-            {/* Main Chat Area */}
-            <div className={`${isMediumScreen ? "w-3/4" : "w-full"} bg-white`}>
-                {/* On smaller screens, show ChatUserDialog first */}
-                {!isMediumScreen && open ? (
-                    <ChatUserDialog open={open} setOpen={setOpen} group={group} user={session?.user} users={users} />
-                ) : (
-                    <>
-                        {/* On large screens, ChatNav is already shown separately, so only Chats should be displayed here */}
-                        {!isMediumScreen && (
-                            <ChatNav chatGroup={group} users={users} user={chatUser} activeUsers={activeUsers} session={session} />
-                        )}
-                        <Chats
-                            group={group}
-                            chatUser={chatUser}
-                            oldMessages={oldMessages}
-                            setActiveUsers={setActiveUsers}
-                            setTypingUser={setTypingUser}
-                            typingUser={typingUser}
-                        />
-                    </>
+            {/* Main chat area */}
+            <div className={`${isMediumScreen ? "w-3/4" : "w-full"} bg-white relative`}>
+                {/* Always show ChatNav on small screens (as a header) */}
+                {!isMediumScreen && (
+                    <div className="border-b">
+                        <ChatNav chatGroup={group} users={users} setUsers={setUsers} user={chatUser} activeUsers={activeUsers} session={session} />
+                    </div>
                 )}
+
+                {/* Chats */}
+                <Chats
+                    group={group}
+                    chatUser={chatUser}
+                    oldMessages={oldMessages}
+                    setActiveUsers={setActiveUsers}
+                    setTypingUser={setTypingUser}
+                    typingUser={typingUser}
+                />
             </div>
+
+            {/* Dialog always mounted, visibility controlled by open */}
+            <ChatUserDialog
+                open={open}
+                setOpen={setOpen}
+                group={group}
+                user={session?.user}
+                users={users}
+                setUsers={setUsers}
+            />
         </div>
     );
 
@@ -90,3 +100,4 @@ function ChatBase({ users, group, oldMessages }: { group: ChatGroupType, users: 
 }
 
 export default ChatBase
+

@@ -29,10 +29,7 @@ export async function fetchChatGroups(token: string) {
 }
 
 export async function fetchChatGroup(id: string) {
-    console.log("\nthe id is\n", id)
-    // const res = await fetch(`${CHAT_GROUP_URL}/${id}`, {
-    //     cache: "no-cache",
-    // });
+    
     const res = await fetch(`${CHAT_GROUP_URL}/${id}`, {
         cache: "no-cache",
     });
@@ -53,7 +50,6 @@ export async function fetchChatGroupUsers(id: string) {
     const res = await fetch(`${CHAT_GROUP_USERS_URL}?group_id=${id}`, {
         cache: "no-cache",
     });
-    console.log("response from fetchchatgrpusers", res)
 
     if (!res.ok) {
         // This will activate the closest `error.js` Error Boundary
@@ -65,3 +61,4 @@ export async function fetchChatGroupUsers(id: string) {
     }
     return [];
 }
+

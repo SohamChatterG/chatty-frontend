@@ -7,39 +7,37 @@ import {
     SheetTitle,
     SheetTrigger,
 } from "@/components/ui/sheet";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { toast } from 'sonner';
 import { HamburgerMenuIcon } from "@radix-ui/react-icons";
 import { Trash2, ShieldCheck } from "lucide-react";
 import { removeUser, makeAdmin } from "@/fetch/chatsFetch";
 import { CustomUser } from "@/app/api/auth/[...nextauth]/options";
+import { fetchChatGroupUsers } from "@/fetch/groupFetch";
 export default function MobileChatSidebar({
     users,
     activeUsers,
     groupId,
-    user
+    user,
+    setUsers,
+
 }: {
     users: Array<GroupChatUserType> | [];
-    activeUsers: Array<GroupChatUserType> | []; // Add activeUsers type
+    activeUsers: Array<GroupChatUserType> | [];
     groupId: string,
-    user: CustomUser
+    user: CustomUser,
+    setUsers: Dispatch<SetStateAction<Array<GroupChatUserType>>>
 }) {
-    const [open, setOpen] = useState(false); // State to manage sidebar visibility
+    const [open, setOpen] = useState(false);
 
     const handleRemoveUser = async (userId: string) => {
         try {
             //@ts-ignore
             await removeUser(user?.token, userId, groupId);
             toast.success("User removed from group!");
-            const storedData = localStorage.getItem(groupId);
-            if (storedData) {
-                const jsonData = JSON.parse(storedData);
-                if (jsonData?.id === userId) {
-                    localStorage.removeItem(groupId);
-                }
-            }
-
-            setOpen(false); // Close
+            setOpen(false);
+            const updatedUsers = await fetchChatGroupUsers(groupId);
+            setUsers(updatedUsers);
         } catch (error) {
 
             console.error(error);
@@ -47,14 +45,33 @@ export default function MobileChatSidebar({
         }
     };
 
-    const handleMakeAdmin = async (userId: string) => {
+    const handleMakeAdmin = async (targetId: string, is_admin: boolean) => {
         try {
             //@ts-ignore
-            await makeAdmin(user?.token, userId, groupId);
-            toast.success("User promoted to admin!");
+            await makeAdmin(
+                user.token as string,
+                targetId,
+                groupId,
+                is_admin,
+                user?.id as string
+            );
+
+
+            if (!is_admin) {
+                toast.success("User promoted to admin!");
+            } else {
+                toast.success("User demoted from admin!");
+            }
+
+            const updatedUsers = await fetchChatGroupUsers(groupId);
+            setUsers(updatedUsers);
         } catch (error) {
             console.error(error);
-            toast.error("Failed to make admin");
+            if (!is_admin) {
+                toast.error("Failed to promote user to admin.");
+            } else {
+                toast.error("Failed to demote user from admin.");
+            }
         }
     };
     console.log("user", user);
@@ -86,7 +103,7 @@ export default function MobileChatSidebar({
                                     {/* Make Admin Button */}
                                     <button
                                         className="text-blue-500 hover:text-blue-700"
-                                        onClick={() => handleMakeAdmin(user?.id as string)}
+                                        onClick={() => handleMakeAdmin(String(item.id), item.is_admin)}
                                     >
                                         <ShieldCheck size={20} />
                                     </button>

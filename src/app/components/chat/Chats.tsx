@@ -23,7 +23,6 @@ export default function Chats({
     const params = useParams();
 
     const [isTyping, setIsTyping] = useState(false);
-    console.log("typing users as prop", typingUser)
     const [message, setMessage] = useState("");
     const [messages, setMessages] = useState<Array<MessageType>>(oldMessages);
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -66,18 +65,6 @@ export default function Chats({
         socket.on("activeUsers", (users: GroupChatUserType[]) => {
             setActiveUsers(users);
         });
-        socket.on("removedFromGroup", () => {
-            console.log("You have been removed from the group.");
-
-            const groupId = params["id"] as string | undefined;
-
-            if (groupId) {
-                localStorage.removeItem(groupId);
-            }
-
-            toast.error("You have been removed from the group.");
-            window.location.href = "/"; // Redirect user
-        });
 
 
         socket.emit("getUsers");
@@ -86,10 +73,7 @@ export default function Chats({
             socket.off("userJoined");
             socket.off("userLeft");
             socket.off("activeUsers");
-            socket.off("removedFromGroup");
-
             socket.close();
-
         };
 
     }, [socket, setActiveUsers, setTypingUser]);

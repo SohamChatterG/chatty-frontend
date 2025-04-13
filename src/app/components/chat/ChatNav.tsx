@@ -1,7 +1,6 @@
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import MobileChatSidebar from "./MobileChatSidebar";
 import GroupChatCardMenu from "@/groupChat/GroupChatCardMenu";
-import { useEffect, useState } from "react";
 import { CustomSession, CustomUser } from "@/app/api/auth/[...nextauth]/options";
 export default function ChatNav({
     chatGroup,
@@ -9,12 +8,14 @@ export default function ChatNav({
     user,
     activeUsers,
     session,
+    setUsers
 }: {
     chatGroup: ChatGroupType;
     users: Array<GroupChatUserType> | [];
     user?: GroupChatUserType;
     activeUsers: Array<GroupChatUserType> | [];
     session: CustomSession | null;
+    setUsers: Dispatch<SetStateAction<Array<GroupChatUserType>>>
 }) {
     console.log("consoling session from chatNav", session)
 
@@ -23,7 +24,7 @@ export default function ChatNav({
 
             <div className="flex space-x-4 md:space-x-0 items-center">
                 {<div className="">
-                    <MobileChatSidebar users={users} activeUsers={activeUsers} groupId={chatGroup.id} user={session?.user as CustomUser} />
+                    <MobileChatSidebar users={users} activeUsers={activeUsers} groupId={chatGroup.id} user={session?.user as CustomUser} setUsers={setUsers} />
                 </div>}
 
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-pink-400 to-purple-600 text-transparent bg-clip-text">

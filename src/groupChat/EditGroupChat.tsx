@@ -27,7 +27,7 @@ export default function EditGroupChat({
     open,
     setOpen,
 }: {
-    user: CustomUser;
+    user?: CustomUser;
     group: ChatGroupType;
     open: boolean;
     setOpen: Dispatch<SetStateAction<boolean>>;
@@ -54,7 +54,7 @@ export default function EditGroupChat({
             setLoading(true);
             const { data } = await axios.put(`${CHAT_GROUP_URL}/${group.id}`, payload, {
                 headers: {
-                    Authorization: user.token,
+                    Authorization: user?.token,
                 },
             });
 

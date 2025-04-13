@@ -14,19 +14,21 @@ import axios from "axios";
 import { CHAT_GROUP_USERS_URL } from "@/lib/apiEndpoints";
 import { toast } from "sonner";
 import { CustomUser } from "@/app/api/auth/[...nextauth]/options";
-import { io } from "socket.io-client";
+import { fetchChatGroupUsers } from "@/fetch/groupFetch";
 export default function ChatUserDialog({
     open,
     setOpen,
     group,
     user,
-    users
+    users,
+    setUsers
 }: {
     open: boolean;
     setOpen: Dispatch<SetStateAction<boolean>>;
     group: ChatGroupType;
     user?: CustomUser;
-    users: Array<GroupChatUserType>
+    users: Array<GroupChatUserType>;
+    setUsers: Dispatch<SetStateAction<Array<GroupChatUserType>>>
 }) {
     const params = useParams();
     const [state, setState] = useState({
@@ -45,50 +47,38 @@ export default function ChatUserDialog({
                 }
             } catch (error) {
                 console.error("Error parsing JSON:", error);
+
             }
         }
     }, []);
 
 
-
-
-    // useEffect(() => {
-    //     const data = localStorage.getItem(params["id"] as string);
-    //     if (data && data !== "undefined" && data !== null) {
-    //         try {
-    //             const jsonData = JSON.parse(data);
-    //             const isUserStillInGroup = users?.some(u => u.id === jsonData?.id);
-
-    //             if (jsonData?.name && jsonData?.group_id && isUserStillInGroup) {
-    //                 setOpen(false);
-    //             } else {
-    //                 localStorage.removeItem(params["id"] as string);
-    //                 setOpen(true);
-    //                 window.location.reload();
-    //             }
-    //         } catch (error) {
-    //             console.error("Error parsing JSON:", error);
-    //         }
-    //     }
-    // }, [users]);
-
-
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
+        console.log("user ", user)
         const localData = localStorage.getItem(params["id"] as string);
         if (!localData) {
             try {
-                const { data } = await axios.post(CHAT_GROUP_USERS_URL, {
-                    name: state.name,
-                    group_id: params["id"] as string,
-                    user_id: user?.id
-                });
+                const { data } = await axios.post(
+                    CHAT_GROUP_USERS_URL,
+                    {
+                        name: state.name,
+                        group_id: params["id"] as string,
+                        user_id: user?.id,
+                    },
+                    {
+                        headers: {
+                            Authorization: `${user?.token}`,
+                        },
+                    }
+                );
                 localStorage.setItem(
                     params["id"] as string,
                     JSON.stringify(data?.data)
 
                 );
             } catch (error) {
+                console.log("error while creating group user", error)
                 toast.error("Something went wrong.please try again!");
             }
         }
@@ -96,6 +86,14 @@ export default function ChatUserDialog({
             toast.error("Please enter correct passcode!");
         } else {
             setOpen(false);
+            try {
+                const updatedUsers = await fetchChatGroupUsers(group.id);
+                setUsers(updatedUsers);
+                toast.success("Successfully joined the group!");
+            } catch (error) {
+                console.error("Error fetching group users:", error);
+                toast.error("Failed to update group users. Please try again!");
+            }
         }
     };
 
