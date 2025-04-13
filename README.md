@@ -1,9 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Chat App Frontend
 
-## Getting Started
+This is the frontend of the Chat App, built with **Next.js** and powered by modern web technologies. The project is designed to be scalable, efficient, and user-friendly.
 
-First, run the development server:
+## 🚀 Features
+- **Real-time messaging** with WebSocket integration
+- **Optimized UI/UX** with responsive design
+- **Next.js framework** for server-side rendering and performance benefits
+- **Redis & Kafka support** for high-performance data streaming
+- **Authentication & Authorization** using JWT
+- **Environment-based configurations** using `.env` files
 
+## 🛠️ Technologies Used
+- **Next.js** - React framework for optimized performance
+- **TypeScript** - Ensuring type safety and better development experience
+- **Tailwind CSS** - Modern utility-first CSS framework
+- **Socket.IO** - Real-time bidirectional event-based communication
+- **Redis Streams** - Used for handling real-time messaging efficiently
+- **Kafka** - Event-driven architecture for scalable messaging
+
+## 📦 Installation & Setup
+
+### Prerequisites
+Make sure you have the following installed:
+- **Node.js** (>= 16)
+- **npm** / **yarn** / **pnpm** / **bun**
+- Redis & Kafka (if using the full setup)
+
+### Clone the Repository
+```bash
+git clone https://github.com/SohamChatterG/chat-app-frontend.git
+cd chat-app-frontend
+```
+
+### Install Dependencies
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+# or
+bun install
+```
+
+### Configure Environment Variables
+Create a `.env.local` file and add your API base URL and other necessary configurations.
+```env
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+NEXT_PUBLIC_SOCKET_URL=http://localhost:8000
+```
+
+### Run the Development Server
 ```bash
 npm run dev
 # or
@@ -13,24 +60,20 @@ pnpm dev
 # or
 bun dev
 ```
+The app will be available at [http://localhost:3000](http://localhost:3000).
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🔗 Learn More
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Socket.IO](https://socket.io/docs/)
+- [Kafka Documentation](https://kafka.apache.org/documentation/)
+- [Redis Streams](https://redis.io/docs/data-types/streams/)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
 
-## Learn More
+## 🤝 Contributing
+We welcome contributions! Feel free to submit a PR or open an issue.
 
-To learn more about Next.js, take a look at the following resources:
+## 📜 License
+This project is licensed under the **MIT License**.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
