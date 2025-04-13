@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import ChatSidebar from "./ChatSidebar";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
+import { SendIcon } from "lucide-react";
 export default function Chats({
     group,
     oldMessages,
@@ -77,6 +78,14 @@ export default function Chats({
         };
 
     }, [socket, setActiveUsers, setTypingUser]);
+    const formatTime = (dateString: string) => {
+        const date = new Date(dateString);
+        const hours = date.getHours();
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        const formattedHours = hours % 12 || 12;
+        return `${formattedHours}:${minutes} ${ampm}`;
+    };
     useEffect(() => {
         let typingTimeout: NodeJS.Timeout;
 
@@ -118,35 +127,83 @@ export default function Chats({
         setMessages([...messages, payload]);
     };
 
+    // return (
+    //     <div className="flex flex-col h-[94vh]  p-4">
+    //         <div className="flex-1 overflow-y-auto flex flex-col-reverse">
+    //             <div ref={messagesEndRef} />
+    //             <div className="flex flex-col gap-2">
+    //                 {messages.map((message) => (
+    //                     <div
+    //                         key={message.id}
+    //                         className={`max-w-sm rounded-lg p-2 ${chatUser && message.name.trim().toLowerCase() === chatUser.name.trim().toLowerCase()
+    //                             ? "bg-gradient-to-r from-blue-400 to-blue-600 text-white self-end"
+    //                             : "bg-gradient-to-r from-gray-200 to-gray-300 text-black self-start"
+    //                             }`}
+    //                     >
+    //                         {/* {("msg " + message.name + "chat " + chatUser?.name+ "\n")} */}
+    //                         {message.message}
+    //                     </div>
+    //                 ))}
+    //             </div>
+    //         </div>
+    //         <span></span>
+    //         <span>{typingUser.length > 0 ? `${typingUser} is typing...` : null} </span>
+    //         <form onSubmit={handleSubmit} className="mt-2 flex items-center">
+    //             <input
+    //                 type="text"
+    //                 placeholder="Type a message..."
+    //                 value={message}
+    //                 className="flex-1 p-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+    //                 onChange={(e) => setMessage(e.target.value)}
+    //             />
+    //         </form>
+    //     </div>
+    // );
     return (
-        <div className="flex flex-col h-[94vh]  p-4">
-            <div className="flex-1 overflow-y-auto flex flex-col-reverse">
+        <div className="flex flex-col h-[calc(100vh-64px)] p-4 bg-gradient-to-b from-white/50 to-gray-50/50">
+            {/* Messages Container */}
+            <div className="flex-1 overflow-y-auto flex flex-col space-y-2 p-2">
                 <div ref={messagesEndRef} />
-                <div className="flex flex-col gap-2">
-                    {messages.map((message) => (
-                        <div
-                            key={message.id}
-                            className={`max-w-sm rounded-lg p-2 ${chatUser && message.name.trim().toLowerCase() === chatUser.name.trim().toLowerCase()
-                                ? "bg-gradient-to-r from-blue-400 to-blue-600 text-white self-end"
-                                : "bg-gradient-to-r from-gray-200 to-gray-300 text-black self-start"
-                                }`}
-                        >
-                            {/* {("msg " + message.name + "chat " + chatUser?.name+ "\n")} */}
-                            {message.message}
-                        </div>
-                    ))}
-                </div>
+                {messages.map((message) => (
+                    <div
+                        key={message.id}
+                        className={`max-w-xs md:max-w-md rounded-2xl p-3 shadow-sm ${chatUser && message.name.trim().toLowerCase() === chatUser.name.trim().toLowerCase()
+                            ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white self-end rounded-br-none"
+                            : "bg-white text-gray-800 self-start rounded-bl-none border border-gray-100"
+                            }`}
+                    >
+                        <p className="font-medium">{message.name}</p>
+                        <p className="mt-1">{message.message}</p>
+                        <p className="text-xs opacity-70 mt-1 text-right">
+                            {formatTime(message.created_at)}
+                        </p>
+                    </div>
+                ))}
             </div>
-            <span></span>
-            <span>{typingUser.length > 0 ? `${typingUser} is typing...` : null} </span>
-            <form onSubmit={handleSubmit} className="mt-2 flex items-center">
+
+            {/* Typing Indicator */}
+            {typingUser.length > 0 && (
+                <div className="px-4 py-1 text-sm text-gray-500 italic">
+                    {`${typingUser} is typing...`}
+                </div>
+            )}
+
+            {/* Input Area */}
+            <form onSubmit={handleSubmit} className="mt-4 flex gap-2 items-center">
                 <input
                     type="text"
                     placeholder="Type a message..."
                     value={message}
-                    className="flex-1 p-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex-1 p-3 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-white shadow-sm"
                     onChange={(e) => setMessage(e.target.value)}
                 />
+                <button
+                    type="submit"
+                    className="p-3 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md hover:shadow-lg transition-all"
+                    onClick={handleSubmit}
+                >
+                    <SendIcon size={18} /> {/* Replace with your icon */}
+                </button>
             </form>
         </div>
     );

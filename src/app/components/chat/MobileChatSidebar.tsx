@@ -20,13 +20,14 @@ export default function MobileChatSidebar({
     groupId,
     user,
     setUsers,
-
+    isLargeScreen
 }: {
     users: Array<GroupChatUserType> | [];
     activeUsers: Array<GroupChatUserType> | [];
     groupId: string,
     user: CustomUser,
-    setUsers: Dispatch<SetStateAction<Array<GroupChatUserType>>>
+    setUsers: Dispatch<SetStateAction<Array<GroupChatUserType>>>,
+    isLargeScreen: boolean
 }) {
     const [open, setOpen] = useState(false);
 
@@ -106,62 +107,100 @@ export default function MobileChatSidebar({
     return (
         <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
-                <HamburgerMenuIcon onClick={() => setOpen(true)} />
+                <button
+                    className="p-2 rounded-md hover:bg-gray-100 transition-colors"
+                    aria-label="Open menu"
+                >
+                    <HamburgerMenuIcon className="w-5 h-5 text-gray-600" />
+                </button>
             </SheetTrigger>
-            <SheetContent side="left" className="bg-muted">
-                <SheetHeader>
-                    <SheetTitle className="text-2xl font-bold">Users</SheetTitle>
+            <SheetContent side="left" className="bg-white w-80 max-w-full border-r border-gray-200">
+                {/* Header */}
+                <SheetHeader className="px-4 py-4 border-b border-gray-100">
+                    <SheetTitle className="text-xl font-semibold text-gray-800">
+                        Team Members
+                    </SheetTitle>
                 </SheetHeader>
-                <div>
-                    {users?.length > 0 &&
-                        users.map((item, index) => (
-                            <div key={index} className="bg-white rounded-md p-2 mt-2 flex justify-between items-center">
-                                <div >
-                                    <div className="flex justify-between">
-                                        <span className="font-bold">   {item.name}</span>
-                                        {item.is_admin && <span className="text-green-400 text-sm">         (admin)</span>}
 
+                {/* Scrollable Content */}
+                <div className="h-[calc(100vh-120px)] overflow-y-auto p-4 space-y-4">
+                    {/* All Users Section */}
+                    <div className="space-y-3">
+                        <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider">
+                            All Members
+                        </h3>
+                        {users?.length > 0 ? (
+                            users.map((item) => (
+                                <div
+                                    key={item.id}
+                                    className="bg-gray-50 rounded-lg p-3 flex items-center justify-between hover:bg-gray-100 transition-colors"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center text-white font-medium">
+                                            {item.name.charAt(0).toUpperCase()}
+                                        </div>
+                                        <div>
+                                            <div className="flex items-center gap-1">
+                                                <p className="font-medium text-gray-800">{item.name}</p>
+                                                {item.is_admin && (
+                                                    <span className="text-xs text-green-500 bg-green-50 px-1.5 py-0.5 rounded-full">
+                                                        Admin
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <p className="text-xs text-gray-500">
+                                                Joined {new Date(item.created_at).toLocaleDateString()}
+                                            </p>
+                                        </div>
                                     </div>
-                                    <p>
-                                        Joined: <span>{new Date(item.created_at).toDateString()}</span>
-                                    </p>
+                                    <div className="flex gap-1">
+                                        <button
+                                            onClick={() => handleMakeAdmin(String(item.id), item.is_admin)}
+                                            className="p-1.5 rounded-full hover:bg-blue-50 text-blue-500 transition-colors"
+                                            title={item.is_admin ? "Remove admin" : "Make admin"}
+                                        >
+                                            <ShieldCheck size={18} />
+                                        </button>
+                                        {item.id !== Number(user?.id) && (
+                                            <button
+                                                onClick={() => handleRemoveUser(String(item.id))}
+                                                className="p-1.5 rounded-full hover:bg-red-50 text-red-500 transition-colors"
+                                                title="Remove user"
+                                            >
+                                                <Trash2 size={18} />
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
-                                <div className="flex space-x-2">
-                                    {/* Make Admin Button */}
-                                    <button
-                                        className="text-blue-500 hover:text-blue-700"
-                                        onClick={() => handleMakeAdmin(String(item.id), item.is_admin)}
-                                    >
-                                        <ShieldCheck size={20} />
-                                    </button>
-                                    {/* Remove User Button */}
-                                    {item.id != Number(user?.id) && <button
-                                        className="text-red-500 hover:text-red-700"
+                            ))
+                        ) : (
+                            <p className="text-gray-500 text-sm">No members found</p>
+                        )}
+                    </div>
 
-                                        onClick={() => handleRemoveUser(String(item.id))}
-                                    >
-                                        <Trash2 size={20} />
-                                    </button>}
+                    {/* Active Users Section */}
+                    <div className="space-y-3 pt-4">
+                        <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider">
+                            Online Now
+                        </h3>
+                        {activeUsers?.length > 0 ? (
+                            activeUsers.map((user) => (
+                                <div key={user.id} className="flex items-center gap-3 p-2">
+                                    <div className="relative">
+                                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-green-400 to-blue-500 flex items-center justify-center text-white font-medium">
+                                            {user.name.charAt(0).toUpperCase()}
+                                        </div>
+                                        <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-400 rounded-full border border-white"></span>
+                                    </div>
+                                    <p className="font-medium text-gray-800">{user.name}</p>
                                 </div>
-                            </div>
-                        ))}
-                </div>
-
-                <SheetHeader>
-                    <SheetTitle className="text-2xl font-bold">Active Users</SheetTitle>
-                </SheetHeader>
-                <div>
-                    {activeUsers?.length > 0 ? (
-                        activeUsers.map((user, index) => (
-                            <div key={index} className="bg-white rounded-md p-2 mt-2">
-                                <p className="font-bold"> {user.name}</p>
-                            </div>
-                        ))
-                    ) : (
-                        <p className="text-gray-500">No active users</p>
-                    )}
+                            ))
+                        ) : (
+                            <p className="text-gray-500 text-sm">No active users</p>
+                        )}
+                    </div>
                 </div>
             </SheetContent>
-        </Sheet >
+        </Sheet>
     );
 }
