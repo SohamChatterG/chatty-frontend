@@ -12,7 +12,7 @@ import { CustomUser } from "@/app/api/auth/[...nextauth]/options";
 import EditGroupChat from "./EditGroupChat";
 import { toast } from "sonner";
 import Env from "@/lib/env";
-import { Delete, DeleteIcon, Edit, LucideDelete, Trash } from "lucide-react";
+import { Edit, Trash } from "lucide-react";
 const DeleteChatGroup = dynamic(() => import("./DeleteChatGroup"));
 
 export default function GroupChatCardMenu({
@@ -26,7 +26,6 @@ export default function GroupChatCardMenu({
 }) {
     const [deleteDialog, setDeleteDialog] = useState(false);
     const [editDialoag, setEditDialog] = useState(false);
-    console.log("consoling from", from)
     const handleCopy = () => {
         navigator.clipboard?.writeText(`${Env.APP_URL}/chat/${group.id}`);
         toast.success("Link copied successfully!");

@@ -5,7 +5,6 @@ import UserReviews from "./components/base/UserReviews";
 import Footer from "./components/base/Footer";
 import { getServerSession } from "next-auth";
 import { authOptions, CustomSession, CustomUser } from "./api/auth/[...nextauth]/options";
-import { fetchChatGroups } from "@/fetch/groupFetch";
 
 export default async function Home() {
   const session: CustomSession | null = await getServerSession(authOptions)

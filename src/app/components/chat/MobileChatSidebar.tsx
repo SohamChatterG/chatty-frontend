@@ -31,22 +31,10 @@ export default function MobileChatSidebar({
 }) {
     const [open, setOpen] = useState(false);
 
-    // const handleRemoveUser = async (userId: string) => {
-    //     try {
-    //         //@ts-ignore
-    //         await removeUser(user?.token, userId, groupId);
-    //         toast.success("User removed from group!");
-    //         setOpen(false);
-    //         const updatedUsers = await fetchChatGroupUsers(groupId);
-    //         setUsers(updatedUsers);
-    //     } catch (error) {
 
-    //         console.error(error);
-    //         toast.error("Failed to remove user");
-    //     }
-    // };
     const handleRemoveUser = async (targetId: string) => {
         try {
+            console.log(`Removing user ${targetId} from group ${groupId} requested by ${user?.id} with token ${user?.token}`);
             const response = await removeUser(
                 user?.token as string,
                 targetId,
