@@ -8,25 +8,25 @@
     ],
     "allowJs": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
+    "strict": false,
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
-    "moduleResolution": "node", // ✅ use "node", not "bundler" (safer for build tools)
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "baseUrl": ".",
-    "strict": false,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
     "paths": {
       "@/*": [
         "./src/*"
       ]
-    },
-    "types": [
-      "node"
-    ]
+    }
   },
   "include": [
     "next-env.d.ts",
