@@ -14,6 +14,7 @@ import { Trash2, ShieldCheck } from "lucide-react";
 import { removeUser, makeAdmin } from "@/fetch/chatsFetch";
 import { CustomUser } from "@/app/api/auth/[...nextauth]/options";
 import { fetchChatGroupUsers } from "@/fetch/groupFetch";
+import { GroupChatUserType } from "@/types";
 export default function MobileChatSidebar({
     users,
     activeUsers,

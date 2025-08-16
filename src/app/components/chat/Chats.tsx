@@ -3,6 +3,7 @@ import { getSocket } from "@/lib/socket.config";
 import { v4 as uuidv4 } from "uuid";
 import { useParams } from "next/navigation";
 import { SendIcon } from "lucide-react";
+import { ChatGroupType, GroupChatUserType, MessageType } from "@/types";
 export default function Chats({
     group,
     oldMessages,
