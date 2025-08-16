@@ -3,6 +3,7 @@ import { fetchChatGroup, fetchChatGroupUsers } from '@/fetch/groupFetch'
 import { notFound } from 'next/navigation'
 import React from 'react'
 import { fetchChats } from '@/fetch/chatsFetch'
+import { ChatGroupType, GroupChatUserType, MessageType } from '@/types'
 type Props = {
     params: {
         id: string;
