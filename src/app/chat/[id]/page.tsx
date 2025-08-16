@@ -10,7 +10,11 @@ type Props = {
     };
 };
 
-async function Chat({ params }: Props) {
+async function Chat({
+    params,
+}: {
+    params: { id: string };
+}) {
 
     if (params.id.length !== 36) {
         return notFound()
