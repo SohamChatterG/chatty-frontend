@@ -20,6 +20,8 @@ import axios, { AxiosError } from "axios";
 import { CHAT_GROUP_URL } from "@/lib/apiEndpoints";
 import { toast } from "sonner";
 import { clearCache } from "@/actions/common";
+import { ChatGroupType } from "@/types";
+
 
 export default function EditGroupChat({
     user,
