@@ -13,7 +13,7 @@ export interface CustomUser {
     email?: string | null,
     provider?: string | null,
     token?: string | null,
-    image: string | null
+    image?: string | null
 }
 export const authOptions: AuthOptions = {
     pages: {
