@@ -9,7 +9,7 @@ type Props = {
     };
 };
 
-async function chat({ params }: Props) {
+async function Chat({ params }: Props) {
 
     if (params.id.length !== 36) {
         return notFound()
@@ -28,4 +28,4 @@ async function chat({ params }: Props) {
     )
 }
 
-export default chat
+export default Chat
