@@ -13,6 +13,8 @@ import EditGroupChat from "./EditGroupChat";
 import { toast } from "sonner";
 import Env from "@/lib/env";
 import { Edit, Trash } from "lucide-react";
+import { ChatGroupType } from "@/types";
+
 const DeleteChatGroup = dynamic(() => import("./DeleteChatGroup"));
 
 export default function GroupChatCardMenu({
