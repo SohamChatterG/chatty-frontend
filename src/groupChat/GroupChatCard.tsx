@@ -23,9 +23,9 @@ export function GroupChatCard({ group, user }: { group: ChatGroupType; user: Cus
 
             <div className="flex items-center mt-2 space-x-2">
                 {group.is_public ? (
-                    <Globe className="w-5 h-5 text-green-300" title="Public Group" />
+                    <Globe className="w-5 h-5 text-green-300" aria-label="Public Group" />
                 ) : (
-                    <Lock className="w-5 h-5 text-red-400" title="Private Group" />
+                    <Lock className="w-5 h-5 text-red-400" aria-label="Private Group" />
                 )}
                 <span className="text-gray-300 text-sm">{group.is_public ? "Public Group" : "Private Group"}</span>
             </div>
