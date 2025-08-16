@@ -7,6 +7,7 @@ import CreateChat from "@/groupChat/CreateChat";
 import { fetchChatGroups } from "@/fetch/groupFetch";
 import { GroupChatCard } from "@/groupChat/GroupChatCard";
 import FooterDashboard from "../components/base/FooterDashboard";
+import { ChatGroupType } from "@/types";
 
 async function Dashboard() {
     const session: CustomSession | null = await getServerSession(authOptions);
