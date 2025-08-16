@@ -2,6 +2,7 @@ import React, { Dispatch, SetStateAction } from "react";
 import MobileChatSidebar from "./MobileChatSidebar";
 import GroupChatCardMenu from "@/groupChat/GroupChatCardMenu";
 import { CustomSession, CustomUser } from "@/app/api/auth/[...nextauth]/options";
+import { ChatGroupType, GroupChatUserType } from "@/types";
 export default function ChatNav({
     chatGroup,
     users,

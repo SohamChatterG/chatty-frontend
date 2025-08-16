@@ -1,12 +1,12 @@
 "use client"
 import React, { useEffect, useMemo, useState } from 'react'
-import ChatSidebar from './ChatSidebar'
 import ChatNav from './ChatNav'
 import ChatUserDialog from './ChatUserDialog'
 import Chats from './Chats'
 import MobileChatSidebar from './MobileChatSidebar'
 import { CustomUser } from '@/app/api/auth/[...nextauth]/options'
 import { CustomSession } from '@/app/api/auth/[...nextauth]/options'
+import { ChatGroupType, GroupChatUserType, MessageType } from '@/types'
 function ChatBase({ fetchedUsers, group, oldMessages }: { group: ChatGroupType, fetchedUsers: Array<GroupChatUserType> | [], oldMessages: Array<MessageType> | [] }) {
     const [typingUser, setTypingUser] = useState<string>(""); // Add typingUsers state
     const [users, setUsers] = useState<Array<GroupChatUserType> | []>(fetchedUsers); // Initialize users state with fetchedUsers

@@ -15,6 +15,7 @@ import { CHAT_GROUP_USERS_URL } from "@/lib/apiEndpoints";
 import { toast } from "sonner";
 import { CustomUser } from "@/app/api/auth/[...nextauth]/options";
 import { fetchChatGroupUsers } from "@/fetch/groupFetch";
+import { ChatGroupType, GroupChatUserType } from "@/types";
 export default function ChatUserDialog({
     open,
     setOpen,

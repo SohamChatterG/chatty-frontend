@@ -1,10 +1,10 @@
 "use client"
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CustomUser } from "@/app/api/auth/[...nextauth]/options";
 import GroupChatCardMenu from "./GroupChatCardMenu";
 import { useRouter } from "next/navigation";
 import { Lock, Globe } from "lucide-react"; // Import icons
+import { ChatGroupType } from "@/types";
 
 export function GroupChatCard({ group, user }: { group: ChatGroupType; user: CustomUser }) {
     const router = useRouter();
