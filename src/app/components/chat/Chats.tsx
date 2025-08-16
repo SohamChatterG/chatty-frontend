@@ -1,16 +1,13 @@
 import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { getSocket } from "@/lib/socket.config";
-import { Input } from "@/components/ui/input";
 import { v4 as uuidv4 } from "uuid";
-import ChatSidebar from "./ChatSidebar";
 import { useParams } from "next/navigation";
-import { toast } from "sonner";
 import { SendIcon } from "lucide-react";
 export default function Chats({
     group,
     oldMessages,
     chatUser,
-    setActiveUsers, // Add this prop
+    setActiveUsers,
     setTypingUser, // Change setTypingUser to settypingUser
     typingUser,
 }: {
@@ -22,7 +19,6 @@ export default function Chats({
     typingUser: string,
 }) {
     const params = useParams();
-
     const [isTyping, setIsTyping] = useState(false);
     const [message, setMessage] = useState("");
     const [messages, setMessages] = useState<Array<MessageType>>(oldMessages);
@@ -176,7 +172,7 @@ export default function Chats({
                     className="p-3 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md hover:shadow-lg transition-all"
                     onClick={handleSubmit}
                 >
-                    <SendIcon size={18} /> {/* Replace with your icon */}
+                    <SendIcon size={18} />
                 </button>
             </form>
         </div>
