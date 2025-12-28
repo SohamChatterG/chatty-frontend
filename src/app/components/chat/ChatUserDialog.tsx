@@ -22,14 +22,16 @@ export default function ChatUserDialog({
     group,
     user,
     users,
-    setUsers
+    setUsers,
+    setChatUser
 }: {
     open: boolean;
     setOpen: Dispatch<SetStateAction<boolean>>;
     group: ChatGroupType;
     user?: CustomUser;
     users: Array<GroupChatUserType>;
-    setUsers: Dispatch<SetStateAction<Array<GroupChatUserType>>>
+    setUsers: Dispatch<SetStateAction<Array<GroupChatUserType>>>;
+    setChatUser: Dispatch<SetStateAction<GroupChatUserType | undefined>>;
 }) {
     const params = useParams();
     const [state, setState] = useState({
@@ -38,33 +40,63 @@ export default function ChatUserDialog({
     });
 
     useEffect(() => {
-        const data = localStorage.getItem(params["id"] as string);
+        const groupId = params["id"] as string;
+        console.log(`[${new Date().toISOString()}] ChatUserDialog useEffect - checking localStorage for group: ${groupId}`);
+        const data = localStorage.getItem(groupId);
+        console.log(`[${new Date().toISOString()}] ChatUserDialog localStorage data:`, data);
         if (data && data !== "undefined" && data !== null) {
             try {
                 const jsonData = JSON.parse(data);
+                console.log(`[${new Date().toISOString()}] ChatUserDialog parsed JSON:`, jsonData);
 
                 if (jsonData?.name && jsonData?.group_id) {
+                    console.log(`[${new Date().toISOString()}] ChatUserDialog setting chatUser from localStorage:`, jsonData);
+                    setChatUser(jsonData as GroupChatUserType);
                     setOpen(false);
+                } else {
+                    console.log(`[${new Date().toISOString()}] ChatUserDialog - data missing name or group_id`);
                 }
             } catch (error) {
-                console.error("Error parsing JSON:", error);
-
+                console.error(`[${new Date().toISOString()}] ChatUserDialog Error parsing JSON:`, error);
             }
+        } else {
+            console.log(`[${new Date().toISOString()}] ChatUserDialog - no data in localStorage for this group`);
         }
-    }, []);
+    }, [params, setChatUser, setOpen]);
 
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        console.log("user ", user)
-        const localData = localStorage.getItem(params["id"] as string);
-        if (!localData) {
+        console.log(`[${new Date().toISOString()}] ChatUserDialog handleSubmit - starting`);
+        console.log(`[${new Date().toISOString()}] ChatUserDialog handleSubmit - user:`, user);
+        console.log(`[${new Date().toISOString()}] ChatUserDialog handleSubmit - state:`, state);
+
+        const groupId = params["id"] as string;
+        let localData = localStorage.getItem(groupId);
+        console.log(`[${new Date().toISOString()}] ChatUserDialog handleSubmit - localData:`, localData);
+
+        let groupUser: GroupChatUserType | null = null;
+
+        // Try to parse existing localStorage data
+        if (localData && localData !== "undefined") {
+            try {
+                groupUser = JSON.parse(localData) as GroupChatUserType;
+                console.log(`[${new Date().toISOString()}] ChatUserDialog handleSubmit - found existing groupUser:`, groupUser);
+            } catch (e) {
+                console.log(`[${new Date().toISOString()}] ChatUserDialog handleSubmit - failed to parse localStorage`);
+                groupUser = null;
+            }
+        }
+
+        // Create new group user if none exists
+        if (!groupUser || !groupUser.name || !groupUser.group_id) {
+            console.log(`[${new Date().toISOString()}] ChatUserDialog handleSubmit - creating new group user`);
             try {
                 const { data } = await axios.post(
                     CHAT_GROUP_USERS_URL,
                     {
                         name: state.name,
-                        group_id: params["id"] as string,
+                        group_id: groupId,
                         user_id: user?.id,
                     },
                     {
@@ -73,28 +105,39 @@ export default function ChatUserDialog({
                         },
                     }
                 );
-                localStorage.setItem(
-                    params["id"] as string,
-                    JSON.stringify(data?.data)
+                console.log(`[${new Date().toISOString()}] ChatUserDialog handleSubmit - API response:`, data);
 
-                );
+                groupUser = data?.data as GroupChatUserType;
+                localStorage.setItem(groupId, JSON.stringify(groupUser));
+                console.log(`[${new Date().toISOString()}] ChatUserDialog handleSubmit - saved to localStorage`);
             } catch (error) {
-                console.log("error while creating group user", error)
-                toast.error("Something went wrong.please try again!");
+                console.log(`[${new Date().toISOString()}] ChatUserDialog handleSubmit - error:`, error);
+                toast.error("Something went wrong. Please try again!");
+                return;
             }
         }
+
+        // Check passcode for private groups
         if (group?.passcode && group?.passcode !== state.passcode) {
             toast.error("Please enter correct passcode!");
-        } else {
-            setOpen(false);
-            try {
-                const updatedUsers = await fetchChatGroupUsers(group.id);
-                setUsers(updatedUsers);
-                toast.success("Successfully joined the group!");
-            } catch (error) {
-                console.error("Error fetching group users:", error);
-                toast.error("Failed to update group users. Please try again!");
-            }
+            return;
+        }
+
+        // Set the chat user and close dialog
+        if (groupUser) {
+            console.log(`[${new Date().toISOString()}] ChatUserDialog handleSubmit - setting chatUser:`, groupUser);
+            setChatUser(groupUser);
+        }
+
+        setOpen(false);
+
+        try {
+            const updatedUsers = await fetchChatGroupUsers(group.id);
+            setUsers(updatedUsers);
+            toast.success("Successfully joined the group!");
+        } catch (error) {
+            console.error("Error fetching group users:", error);
+            toast.error("Failed to update group users. Please try again!");
         }
     };
 

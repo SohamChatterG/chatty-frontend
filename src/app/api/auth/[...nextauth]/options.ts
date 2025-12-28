@@ -39,8 +39,10 @@ export const authOptions: AuthOptions = {
                 user.provider = data?.user?.provider;
                 return true
             } catch (error) {
+                console.error("BACKEND LOGIN FAILED:", error.response?.data || error);
                 return false;
             }
+
 
         },
         async session({ session, user, token }: { session: CustomSession, user: User, token: JWT }) {
