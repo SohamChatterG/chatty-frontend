@@ -127,17 +127,17 @@ export default function VoiceRecorder({
 
     if (audioUrl) {
         return (
-            <div className="flex items-center gap-2 p-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
-                <audio src={audioUrl} controls className="h-8 max-w-[200px]" />
-                <span className="text-sm text-gray-500">{formatDuration(duration)}</span>
+            <div className="flex items-center gap-1 sm:gap-2 p-1 sm:p-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
+                <audio src={audioUrl} controls className="h-8 max-w-[120px] sm:max-w-[200px]" />
+                <span className="text-xs sm:text-sm text-gray-500 hidden sm:inline">{formatDuration(duration)}</span>
                 <Button
                     type="button"
                     variant="ghost"
                     size="icon"
                     onClick={cancelRecording}
-                    className="text-red-500 hover:text-red-600"
+                    className="text-red-500 hover:text-red-600 h-8 w-8 sm:h-9 sm:w-9"
                 >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
                 </Button>
                 <Button
                     type="button"
@@ -145,12 +145,12 @@ export default function VoiceRecorder({
                     size="icon"
                     onClick={sendVoiceMessage}
                     disabled={isUploading}
-                    className="text-blue-500 hover:text-blue-600"
+                    className="text-blue-500 hover:text-blue-600 h-8 w-8 sm:h-9 sm:w-9"
                 >
                     {isUploading ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
                     ) : (
-                        <Send className="h-4 w-4" />
+                        <Send className="h-3 w-3 sm:h-4 sm:w-4" />
                     )}
                 </Button>
             </div>
@@ -158,10 +158,10 @@ export default function VoiceRecorder({
     }
 
     return (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:gap-2">
             {isRecording ? (
                 <>
-                    <span className="text-sm text-red-500 animate-pulse flex items-center gap-1">
+                    <span className="text-xs sm:text-sm text-red-500 animate-pulse flex items-center gap-1">
                         <span className="w-2 h-2 bg-red-500 rounded-full" />
                         {formatDuration(duration)}
                     </span>
@@ -170,9 +170,9 @@ export default function VoiceRecorder({
                         variant="ghost"
                         size="icon"
                         onClick={stopRecording}
-                        className="text-red-500 hover:text-red-600"
+                        className="text-red-500 hover:text-red-600 h-8 w-8 sm:h-9 sm:w-9"
                     >
-                        <Square className="h-4 w-4 fill-current" />
+                        <Square className="h-3 w-3 sm:h-4 sm:w-4 fill-current" />
                     </Button>
                 </>
             ) : (
@@ -181,9 +181,9 @@ export default function VoiceRecorder({
                     variant="ghost"
                     size="icon"
                     onClick={startRecording}
-                    className="text-gray-500 hover:text-gray-600"
+                    className="text-gray-500 hover:text-gray-600 h-8 w-8 sm:h-9 sm:w-9"
                 >
-                    <Mic className="h-5 w-5" />
+                    <Mic className="h-4 w-4 sm:h-5 sm:w-5" />
                 </Button>
             )}
         </div>

@@ -65,7 +65,7 @@ export function EncryptionSetup({
         const membersWithIds = groupMembers
             .filter((m): m is GroupChatUserType & { user_id: number } => m.user_id !== undefined)
             .map(m => ({ user_id: m.user_id }));
-        
+
         if (membersWithIds.length === 0) {
             toast.error("No authenticated members in this group");
             return;
@@ -149,7 +149,7 @@ export function EncryptionSetup({
                             <div className="flex-1">
                                 <h4 className="font-medium text-sm">Step 1: Setup Your Keys</h4>
                                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                                    {hasKeys 
+                                    {hasKeys
                                         ? "Your encryption keys are ready"
                                         : "Generate your personal encryption keys"}
                                 </p>
@@ -182,7 +182,7 @@ export function EncryptionSetup({
                             <div className="flex-1">
                                 <h4 className="font-medium text-sm">Step 2: Enable for Group</h4>
                                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                                    {isAdmin 
+                                    {isAdmin
                                         ? "Enable encryption for all group members"
                                         : "Only admins can enable encryption"}
                                 </p>

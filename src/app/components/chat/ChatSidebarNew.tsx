@@ -89,8 +89,8 @@ export default function ChatSidebar({
     const isUserOnline = (userId: string | number | undefined) => {
         if (!userId) return false;
         const userIdStr = String(userId);
-        return (activeUsers as any[]).some(au => 
-            String(au.user_id) === userIdStr || 
+        return (activeUsers as any[]).some(au =>
+            String(au.user_id) === userIdStr ||
             String(au.id) === userIdStr
         );
     };

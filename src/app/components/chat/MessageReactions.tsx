@@ -55,9 +55,9 @@ export default function MessageReactions({
                 <button
                     key={reaction.emoji}
                     onClick={() => handleReactionClick(reaction.emoji)}
-                    className={`px-2 py-0.5 rounded-full text-xs flex items-center gap-1 transition-all ${reaction.userReacted
-                            ? "bg-blue-100 border border-blue-300"
-                            : "bg-gray-100 border border-gray-200 hover:bg-gray-200"
+                    className={`px-1.5 sm:px-2 py-0.5 rounded-full text-[10px] sm:text-xs flex items-center gap-0.5 sm:gap-1 transition-all ${reaction.userReacted
+                        ? "bg-blue-100 border border-blue-300 dark:bg-blue-900/50 dark:border-blue-600"
+                        : "bg-gray-100 border border-gray-200 hover:bg-gray-200 dark:bg-slate-700 dark:border-slate-600 dark:hover:bg-slate-600"
                         }`}
                     title={reaction.users.join(", ")}
                 >
@@ -70,9 +70,9 @@ export default function MessageReactions({
             <div className="relative">
                 <button
                     onClick={() => setShowPicker(!showPicker)}
-                    className="p-1 rounded-full hover:bg-gray-200 transition-all"
+                    className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-slate-700 transition-all"
                 >
-                    <Smile className="w-4 h-4 text-gray-500" />
+                    <Smile className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-500 dark:text-gray-400" />
                 </button>
 
                 {showPicker && (
@@ -81,12 +81,12 @@ export default function MessageReactions({
                             className="fixed inset-0 z-10"
                             onClick={() => setShowPicker(false)}
                         ></div>
-                        <div className="absolute bottom-full mb-1 left-0 bg-white border rounded-lg shadow-lg p-2 z-20 flex gap-1">
+                        <div className="absolute bottom-full mb-1 left-0 sm:left-auto sm:right-0 bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-lg shadow-lg p-1.5 sm:p-2 z-20 flex gap-0.5 sm:gap-1 max-w-[calc(100vw-2rem)]">
                             {EMOJI_LIST.map((emoji) => (
                                 <button
                                     key={emoji}
                                     onClick={() => handleReactionClick(emoji)}
-                                    className="text-xl hover:scale-125 transition-transform p-1"
+                                    className="text-base sm:text-xl hover:scale-125 transition-transform p-0.5 sm:p-1"
                                 >
                                     {emoji}
                                 </button>

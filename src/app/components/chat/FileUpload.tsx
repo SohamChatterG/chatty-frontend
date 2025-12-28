@@ -89,34 +89,34 @@ export default function FileUpload({ onFileUploaded }: FileUploadProps) {
                         onChange={handleFileSelect}
                         accept="image/*,video/*,.pdf,.doc,.docx,.txt"
                     />
-                    <Paperclip className="w-5 h-5 text-gray-500 hover:text-blue-500" />
+                    <Paperclip className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 hover:text-blue-500" />
                 </label>
             ) : (
-                <div className="absolute bottom-full mb-2 left-0 bg-white border rounded-lg shadow-lg p-3 min-w-[300px]">
-                    <div className="flex items-start gap-3">
+                <div className="absolute bottom-full mb-2 left-0 sm:left-0 right-0 sm:right-auto bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-lg shadow-lg p-2 sm:p-3 min-w-[200px] sm:min-w-[300px] max-w-[calc(100vw-2rem)]">
+                    <div className="flex items-start gap-2 sm:gap-3">
                         {preview ? (
-                            <img src={preview} alt="Preview" className="w-20 h-20 object-cover rounded" />
+                            <img src={preview} alt="Preview" className="w-14 h-14 sm:w-20 sm:h-20 object-cover rounded flex-shrink-0" />
                         ) : (
-                            <div className="w-20 h-20 flex items-center justify-center bg-gray-100 rounded">
+                            <div className="w-14 h-14 sm:w-20 sm:h-20 flex items-center justify-center bg-gray-100 dark:bg-slate-700 rounded flex-shrink-0">
                                 {getFileIcon(selectedFile.type)}
                             </div>
                         )}
-                        <div className="flex-1">
-                            <p className="font-medium text-sm truncate">{selectedFile.name}</p>
-                            <p className="text-xs text-gray-500">
+                        <div className="flex-1 min-w-0">
+                            <p className="font-medium text-xs sm:text-sm truncate dark:text-white">{selectedFile.name}</p>
+                            <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">
                                 {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
                             </p>
                             <button
                                 onClick={handleUpload}
                                 disabled={uploading}
-                                className="mt-2 px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 disabled:opacity-50 flex items-center gap-1"
+                                className="mt-1.5 sm:mt-2 px-2 sm:px-3 py-1 bg-blue-500 text-white text-xs sm:text-sm rounded hover:bg-blue-600 disabled:opacity-50 flex items-center gap-1"
                             >
-                                <Upload className="w-4 h-4" />
+                                <Upload className="w-3 h-3 sm:w-4 sm:h-4" />
                                 {uploading ? "Uploading..." : "Upload"}
                             </button>
                         </div>
-                        <button onClick={clearFile} className="text-gray-400 hover:text-gray-600">
-                            <X className="w-5 h-5" />
+                        <button onClick={clearFile} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 flex-shrink-0">
+                            <X className="w-4 h-4 sm:w-5 sm:h-5" />
                         </button>
                     </div>
                 </div>

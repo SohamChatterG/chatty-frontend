@@ -18,10 +18,10 @@ const KEY_STORE = 'private_keys';
 function openDB(): Promise<IDBDatabase> {
     return new Promise((resolve, reject) => {
         const request = indexedDB.open(DB_NAME, DB_VERSION);
-        
+
         request.onerror = () => reject(request.error);
         request.onsuccess = () => resolve(request.result);
-        
+
         request.onupgradeneeded = (event) => {
             const db = (event.target as IDBOpenDBRequest).result;
             if (!db.objectStoreNames.contains(KEY_STORE)) {
@@ -34,12 +34,12 @@ function openDB(): Promise<IDBDatabase> {
 async function storePrivateKey(userId: number, privateKey: CryptoKey): Promise<void> {
     const db = await openDB();
     const exportedKey = await crypto.subtle.exportKey('jwk', privateKey);
-    
+
     return new Promise((resolve, reject) => {
         const tx = db.transaction(KEY_STORE, 'readwrite');
         const store = tx.objectStore(KEY_STORE);
         const request = store.put({ userId, privateKey: exportedKey });
-        
+
         request.onerror = () => reject(request.error);
         request.onsuccess = () => resolve();
     });
@@ -47,19 +47,19 @@ async function storePrivateKey(userId: number, privateKey: CryptoKey): Promise<v
 
 async function getPrivateKey(userId: number): Promise<CryptoKey | null> {
     const db = await openDB();
-    
+
     return new Promise((resolve, reject) => {
         const tx = db.transaction(KEY_STORE, 'readonly');
         const store = tx.objectStore(KEY_STORE);
         const request = store.get(userId);
-        
+
         request.onerror = () => reject(request.error);
         request.onsuccess = async () => {
             if (!request.result) {
                 resolve(null);
                 return;
             }
-            
+
             try {
                 const privateKey = await crypto.subtle.importKey(
                     'jwk',
@@ -229,13 +229,13 @@ export async function encryptGroupKeyForUser(
 ): Promise<string> {
     // Import user's public key
     const userPublicKey = await importPublicKey(userPublicKeyBase64);
-    
+
     // Derive shared secret
     const sharedKey = await deriveSharedKey(senderPrivateKey, userPublicKey);
-    
+
     // Export group key
     const groupKeyRaw = await crypto.subtle.exportKey('raw', groupKey);
-    
+
     // Encrypt with shared key
     const iv = crypto.getRandomValues(new Uint8Array(12));
     const encryptedKey = await crypto.subtle.encrypt(
@@ -243,12 +243,12 @@ export async function encryptGroupKeyForUser(
         sharedKey,
         groupKeyRaw
     );
-    
+
     // Combine IV + encrypted key
     const combined = new Uint8Array(iv.length + encryptedKey.byteLength);
     combined.set(iv, 0);
     combined.set(new Uint8Array(encryptedKey), iv.length);
-    
+
     return arrayBufferToBase64(combined.buffer);
 }
 
@@ -262,22 +262,22 @@ export async function decryptGroupKey(
 ): Promise<CryptoKey> {
     // Import sender's public key
     const senderPublicKey = await importPublicKey(senderPublicKeyBase64);
-    
+
     // Derive shared secret
     const sharedKey = await deriveSharedKey(userPrivateKey, senderPublicKey);
-    
+
     // Decode encrypted key
     const combined = new Uint8Array(base64ToArrayBuffer(encryptedKeyBase64));
     const iv = combined.slice(0, 12);
     const encryptedKey = combined.slice(12);
-    
+
     // Decrypt
     const decryptedKeyRaw = await crypto.subtle.decrypt(
         { name: 'AES-GCM', iv },
         sharedKey,
         encryptedKey
     );
-    
+
     // Import as AES key
     return crypto.subtle.importKey(
         'raw',
@@ -294,19 +294,19 @@ export async function decryptGroupKey(
 export async function encryptMessage(message: string, groupKey: CryptoKey): Promise<string> {
     const encoder = new TextEncoder();
     const data = encoder.encode(message);
-    
+
     const iv = crypto.getRandomValues(new Uint8Array(12));
     const encrypted = await crypto.subtle.encrypt(
         { name: 'AES-GCM', iv },
         groupKey,
         data
     );
-    
+
     // Combine IV + encrypted message
     const combined = new Uint8Array(iv.length + encrypted.byteLength);
     combined.set(iv, 0);
     combined.set(new Uint8Array(encrypted), iv.length);
-    
+
     return arrayBufferToBase64(combined.buffer);
 }
 
@@ -317,13 +317,13 @@ export async function decryptMessage(encryptedBase64: string, groupKey: CryptoKe
     const combined = new Uint8Array(base64ToArrayBuffer(encryptedBase64));
     const iv = combined.slice(0, 12);
     const encrypted = combined.slice(12);
-    
+
     const decrypted = await crypto.subtle.decrypt(
         { name: 'AES-GCM', iv },
         groupKey,
         encrypted
     );
-    
+
     const decoder = new TextDecoder();
     return decoder.decode(decrypted);
 }
@@ -342,7 +342,7 @@ export async function cacheGroupKey(groupId: string, groupKey: CryptoKey): Promi
 export async function getCachedGroupKey(groupId: string): Promise<CryptoKey | null> {
     const keyBase64 = getStoredGroupKey(groupId);
     if (!keyBase64) return null;
-    
+
     try {
         return await importGroupKey(keyBase64);
     } catch {
@@ -355,13 +355,13 @@ export async function getCachedGroupKey(groupId: string): Promise<CryptoKey | nu
  */
 export async function clearEncryptionData(): Promise<void> {
     localStorage.removeItem('e2e_group_keys');
-    
+
     const db = await openDB();
     return new Promise((resolve, reject) => {
         const tx = db.transaction(KEY_STORE, 'readwrite');
         const store = tx.objectStore(KEY_STORE);
         const request = store.clear();
-        
+
         request.onerror = () => reject(request.error);
         request.onsuccess = () => resolve();
     });
@@ -369,7 +369,7 @@ export async function clearEncryptionData(): Promise<void> {
 
 // Export a helper to check if E2E is available in the browser
 export function isE2ESupported(): boolean {
-    return typeof crypto !== 'undefined' && 
-           typeof crypto.subtle !== 'undefined' &&
-           typeof indexedDB !== 'undefined';
+    return typeof crypto !== 'undefined' &&
+        typeof crypto.subtle !== 'undefined' &&
+        typeof indexedDB !== 'undefined';
 }

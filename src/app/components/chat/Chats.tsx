@@ -624,12 +624,12 @@ export default function Chats({
 
 
     return (
-        <div className="flex flex-col h-[calc(100vh-64px)] p-4 bg-gradient-to-b from-white/50 to-gray-50/50">
+        <div className="flex flex-col h-[calc(100vh-64px)] p-2 sm:p-4 bg-gradient-to-b from-white/50 to-gray-50/50">
             {/* Encryption Status Banner */}
             {isGroupEncrypted && (
-                <div className="mb-2 px-3 py-2 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg flex items-center justify-center gap-2">
-                    <Lock className="w-4 h-4 text-green-600 dark:text-green-400" />
-                    <span className="text-sm text-green-700 dark:text-green-300 font-medium">
+                <div className="mb-2 px-2 sm:px-3 py-1.5 sm:py-2 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg flex items-center justify-center gap-2">
+                    <Lock className="w-3 h-3 sm:w-4 sm:h-4 text-green-600 dark:text-green-400" />
+                    <span className="text-xs sm:text-sm text-green-700 dark:text-green-300 font-medium">
                         Messages are end-to-end encrypted
                     </span>
                 </div>
@@ -662,7 +662,7 @@ export default function Chats({
             </div>
 
             {/* Messages Container */}
-            <div className="flex-1 overflow-y-auto flex flex-col space-y-2 p-2">
+            <div className="flex-1 overflow-y-auto flex flex-col space-y-2 p-1 sm:p-2">
                 {messages.map((msg) => {
                     const isOwnMessage = chatUser && msg.name.trim().toLowerCase() === chatUser.name.trim().toLowerCase();
 
@@ -670,7 +670,7 @@ export default function Chats({
                         <div
                             key={msg.id}
                             ref={(el) => { messageRefs.current[msg.id] = el; }}
-                            className={`group relative max-w-xs md:max-w-md rounded-2xl p-3 shadow-sm transition-all ${msg.deleted_at
+                            className={`group relative max-w-[85%] sm:max-w-xs md:max-w-md rounded-2xl p-2 sm:p-3 shadow-sm transition-all ${msg.deleted_at
                                 ? "bg-gray-100 text-gray-400 italic"
                                 : isOwnMessage
                                     ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white self-end rounded-br-none"
@@ -811,7 +811,7 @@ export default function Chats({
             )}
 
             {/* Input Area */}
-            <form onSubmit={handleSubmit} className="mt-4 flex gap-2 items-center">
+            <form onSubmit={handleSubmit} className="mt-4 flex gap-1 sm:gap-2 items-center px-1 sm:px-0">
                 <FileUpload onFileUploaded={handleFileUploaded} />
                 <VoiceRecorder
                     groupId={group.id}
@@ -821,9 +821,9 @@ export default function Chats({
                 />
                 <input
                     type="text"
-                    placeholder="Type a message... (use @ to mention)"
+                    placeholder="Type a message..."
                     value={message}
-                    className="flex-1 p-3 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-white shadow-sm"
+                    className="flex-1 min-w-0 p-2 sm:p-3 text-sm sm:text-base rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-white shadow-sm"
                     onChange={(e) => {
                         setMessage(e.target.value);
                         // Extract mentions from the message
@@ -843,7 +843,7 @@ export default function Chats({
                 />
                 <button
                     type="submit"
-                    className="p-3 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md hover:shadow-lg transition-all"
+                    className="p-2 sm:p-3 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md hover:shadow-lg transition-all flex-shrink-0"
                 >
                     <SendIcon size={18} />
                 </button>
