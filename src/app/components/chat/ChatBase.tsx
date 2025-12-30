@@ -10,6 +10,9 @@ import { CustomUser } from '@/app/api/auth/[...nextauth]/options'
 import { CustomSession } from '@/app/api/auth/[...nextauth]/options'
 import { ChatGroupType, GroupChatUserType, MessageType } from '@/types'
 import { ThemeProvider, useTheme } from '@/contexts/ThemeContext'
+import { useRouter } from 'next/navigation'
+import { ArrowLeft, Loader2 } from 'lucide-react'
+import { motion } from 'framer-motion'
 
 function ChatBase({ fetchedUsers, group, oldMessages }: { group: ChatGroupType, fetchedUsers: Array<GroupChatUserType> | [], oldMessages: Array<MessageType> | [] }) {
     const [typingUser, setTypingUser] = useState<string>(""); // Add typingUsers state
@@ -128,6 +131,14 @@ function ChatBaseContent({
 }: any) {
     const { theme } = useTheme();
     const isDark = theme === "dark";
+    const router = useRouter();
+    const [isNavigatingBack, setIsNavigatingBack] = useState(false);
+
+    const handleBackToDashboard = () => {
+        if (isNavigatingBack) return;
+        setIsNavigatingBack(true);
+        router.push("/dashboard");
+    };
 
     return (
         <GroupAccessGate
@@ -161,6 +172,27 @@ function ChatBaseContent({
                             className={`p-6 border-b ${isDark ? "border-slate-700/50" : "border-gray-200"
                                 }`}
                         >
+                            {/* Back to Dashboard Button */}
+                            <motion.button
+                                onClick={handleBackToDashboard}
+                                disabled={isNavigatingBack}
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                className={`w-full flex items-center gap-2 px-3 py-2 mb-4 rounded-xl transition-all ${isDark
+                                    ? "bg-slate-700/50 hover:bg-slate-600/50 text-gray-300"
+                                    : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+                                    } ${isNavigatingBack ? "opacity-70 cursor-not-allowed" : ""}`}
+                            >
+                                {isNavigatingBack ? (
+                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                ) : (
+                                    <ArrowLeft className="w-4 h-4" />
+                                )}
+                                <span className="text-sm font-medium">
+                                    {isNavigatingBack ? "Loading..." : "Back to Dashboard"}
+                                </span>
+                            </motion.button>
+                            
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
                                     <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500 via-pink-500 to-indigo-500 flex items-center justify-center text-white font-bold text-lg shadow-lg">

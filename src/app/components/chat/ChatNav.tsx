@@ -1,11 +1,12 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { motion } from "framer-motion";
 import MobileChatSidebar from "./MobileChatSidebar";
 import GroupChatCardMenu from "@/groupChat/GroupChatCardMenu";
 import { CustomSession, CustomUser } from "@/app/api/auth/[...nextauth]/options";
 import { ChatGroupType, GroupChatUserType } from "@/types";
 import { useTheme } from "@/contexts/ThemeContext";
-import { Moon, Sun } from "lucide-react";
+import { Moon, Sun, ArrowLeft, Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 export default function ChatNav({
     chatGroup,
     users,
@@ -26,6 +27,14 @@ export default function ChatNav({
     console.log("consoling session from chatNav", session)
     const { theme, toggleTheme } = useTheme();
     const isDark = theme === "dark";
+    const router = useRouter();
+    const [isNavigatingBack, setIsNavigatingBack] = useState(false);
+
+    const handleBackToDashboard = () => {
+        if (isNavigatingBack) return;
+        setIsNavigatingBack(true);
+        router.push("/dashboard");
+    };
 
     return (
         <nav className={`w-full flex justify-between items-center px-3 sm:px-6 py-2 sm:py-4 border-b backdrop-blur-xl transition-colors duration-300 ${isDark
@@ -33,6 +42,26 @@ export default function ChatNav({
             : "border-gray-200 bg-white/80"
             }`}>
             <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-1">
+                {/* Back Button */}
+                <motion.button
+                    onClick={handleBackToDashboard}
+                    disabled={isNavigatingBack}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className={`flex items-center gap-1 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg sm:rounded-xl transition-all ${isDark
+                        ? "bg-slate-700/50 hover:bg-slate-600/50 text-gray-300"
+                        : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+                        } ${isNavigatingBack ? "opacity-70 cursor-not-allowed" : ""}`}
+                >
+                    {isNavigatingBack ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                        <ArrowLeft className="w-4 h-4" />
+                    )}
+                    <span className="text-xs sm:text-sm font-medium hidden xs:inline">
+                        {isNavigatingBack ? "Loading..." : "Dashboard"}
+                    </span>
+                </motion.button>
                 {/* Mobile Sidebar Toggle */}
                 {!isMediumScreen && (
                     <div className="mr-1 sm:mr-2 flex-shrink-0">

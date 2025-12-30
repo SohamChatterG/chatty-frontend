@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import {
     Dialog,
     DialogContent,
@@ -10,15 +11,19 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { signIn } from "next-auth/react";
 import { DialogDescription } from "@radix-ui/react-dialog";
-
-const handleGoogleLogin = async () => {
-    signIn("google", {
-        redirect: true,
-        callbackUrl: "/dashboard",
-    });
-};
+import { Loader2 } from "lucide-react";
 
 export default function LoginModal() {
+    const [loading, setLoading] = useState(false);
+
+    const handleGoogleLogin = async () => {
+        setLoading(true);
+        signIn("google", {
+            redirect: true,
+            callbackUrl: "/dashboard",
+        });
+    };
+
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -32,15 +37,19 @@ export default function LoginModal() {
                         conversations in seconds.
                     </DialogDescription>
                 </DialogHeader>
-                <Button variant="outline" onClick={handleGoogleLogin}>
-                    <Image
-                        src="/images/google.png"
-                        className=" mr-4"
-                        width={25}
-                        height={25}
-                        alt="google"
-                    />
-                    Continue with Google
+                <Button variant="outline" onClick={handleGoogleLogin} disabled={loading}>
+                    {loading ? (
+                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    ) : (
+                        <Image
+                            src="/images/google.png"
+                            className="mr-4"
+                            width={25}
+                            height={25}
+                            alt="google"
+                        />
+                    )}
+                    {loading ? "Signing in..." : "Continue with Google"}
                 </Button>
             </DialogContent>
         </Dialog>

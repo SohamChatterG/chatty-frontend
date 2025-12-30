@@ -1,12 +1,12 @@
 "use client";
-import React from "react";
+import React, { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { DashNav } from "../components/base/dashboard/DashNav";
 import CreateChat from "@/groupChat/CreateChat";
 import { GroupChatCard } from "@/groupChat/GroupChatCard";
 import FooterDashboard from "../components/base/FooterDashboard";
 import { ChatGroupType } from "@/types";
-import { MessageSquare } from "lucide-react";
+import { MessageSquare, Search, X } from "lucide-react";
 import { ThemeProvider, useTheme } from "@/contexts/ThemeContext";
 
 const containerVariants = {
@@ -41,6 +41,16 @@ function DashboardContent({
 }) {
     const { theme } = useTheme();
     const isDark = theme === "dark";
+    const [searchQuery, setSearchQuery] = useState("");
+
+    // Filter groups based on search query
+    const filteredGroups = useMemo(() => {
+        if (!searchQuery.trim()) return groups;
+        const query = searchQuery.toLowerCase().trim();
+        return groups.filter(group => 
+            group.title.toLowerCase().includes(query)
+        );
+    }, [groups, searchQuery]);
 
     return (
         <div
@@ -101,7 +111,7 @@ function DashboardContent({
             />
 
             <div className="relative z-10">
-                <DashNav name={session?.user?.name ?? "User"} image={session?.user?.image} />
+                <DashNav name={session?.user?.name ?? "User"} image={session?.user?.image} token={session?.user?.token} />
 
                 <div className="container mx-auto py-12 px-4 md:px-6">
                     {/* Header Section */}
@@ -109,7 +119,7 @@ function DashboardContent({
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6 }}
-                        className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4"
+                        className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4"
                     >
                         <div>
                             <h1
@@ -121,8 +131,10 @@ function DashboardContent({
                                 Your Chats
                             </h1>
                             <p className={isDark ? "text-gray-400" : "text-gray-600"}>
-                                {groups.length}{" "}
-                                {groups.length === 1 ? "conversation" : "conversations"} active
+                                {filteredGroups.length}{" "}
+                                {filteredGroups.length === 1 ? "conversation" : "conversations"} 
+                                {searchQuery && ` found`}
+                                {!searchQuery && ` active`}
                             </p>
                         </div>
                         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
@@ -130,19 +142,89 @@ function DashboardContent({
                         </motion.div>
                     </motion.div>
 
+                    {/* Search Bar */}
+                    {groups.length > 0 && (
+                        <motion.div
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.4, delay: 0.2 }}
+                            className="mb-8"
+                        >
+                            <div className={`relative max-w-md ${isDark ? "" : ""}`}>
+                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <Search className={`w-5 h-5 ${isDark ? "text-gray-400" : "text-gray-500"}`} />
+                                </div>
+                                <input
+                                    type="text"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    placeholder="Search your chats..."
+                                    className={`w-full pl-12 pr-10 py-3 rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 ${isDark 
+                                        ? "bg-slate-800/50 border-slate-700 text-white placeholder-gray-400 focus:ring-purple-500/50 focus:border-purple-500/50" 
+                                        : "bg-white border-gray-200 text-gray-900 placeholder-gray-500 focus:ring-purple-500/30 focus:border-purple-400"
+                                    }`}
+                                />
+                                {searchQuery && (
+                                    <button
+                                        onClick={() => setSearchQuery("")}
+                                        className="absolute inset-y-0 right-0 pr-4 flex items-center"
+                                    >
+                                        <X className={`w-5 h-5 ${isDark ? "text-gray-400 hover:text-gray-200" : "text-gray-500 hover:text-gray-700"} transition-colors`} />
+                                    </button>
+                                )}
+                            </div>
+                        </motion.div>
+                    )}
+
                     {/* Chat Cards Grid */}
-                    {groups.length > 0 ? (
+                    {filteredGroups.length > 0 ? (
                         <motion.div
                             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
                             variants={containerVariants}
                             initial="hidden"
                             animate="visible"
                         >
-                            {groups.map((group, index) => (
+                            {filteredGroups.map((group, index) => (
                                 <motion.div key={group.id} variants={itemVariants}>
                                     <GroupChatCard group={group} user={session?.user!} />
                                 </motion.div>
                             ))}
+                        </motion.div>
+                    ) : searchQuery ? (
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.5 }}
+                            className="flex flex-col items-center justify-center py-20"
+                        >
+                            <motion.div
+                                className="w-24 h-24 bg-gradient-to-br from-gray-400 to-gray-500 rounded-full flex items-center justify-center mb-6 shadow-xl"
+                            >
+                                <Search className="w-12 h-12 text-white" />
+                            </motion.div>
+                            <h2
+                                className={`text-2xl font-bold mb-2 ${isDark ? "text-white" : "text-slate-900"
+                                    }`}
+                            >
+                                No chats found
+                            </h2>
+                            <p
+                                className={`mb-6 text-center max-w-md ${isDark ? "text-gray-400" : "text-gray-600"
+                                    }`}
+                            >
+                                No chats matching &quot;{searchQuery}&quot; were found. Try a different search term.
+                            </p>
+                            <motion.button
+                                onClick={() => setSearchQuery("")}
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                className={`px-6 py-2 rounded-lg transition-colors ${isDark 
+                                    ? "bg-slate-700 hover:bg-slate-600 text-white" 
+                                    : "bg-gray-200 hover:bg-gray-300 text-gray-800"
+                                }`}
+                            >
+                                Clear Search
+                            </motion.button>
                         </motion.div>
                     ) : (
                         <motion.div

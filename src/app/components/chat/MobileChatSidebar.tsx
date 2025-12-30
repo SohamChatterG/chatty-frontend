@@ -222,9 +222,10 @@ export default function MobileChatSidebar({
                             Online Now
                         </h3>
                         {activeUsers?.length > 0 ? (
-                            activeUsers.map((user) => (
+                            // Deduplicate activeUsers by user_id or id
+                            [...new Map(activeUsers.map(u => [u.user_id || u.id, u])).values()].map((user) => (
                                 <div
-                                    key={user.id}
+                                    key={`online-${user.user_id || user.id}`}
                                     className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-200 ${isDark
                                         ? "bg-slate-800/50 border border-slate-700/30"
                                         : "bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200/50"

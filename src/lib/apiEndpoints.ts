@@ -8,6 +8,10 @@ export const CHATS_URL = API_URL + "/chats"
 export const CHAT_GROUP_ADMIN = API_URL + "/chat-group-users/make-admin"
 export const REMOVE_MEMBER = API_URL + "/chat-group-users/remove-user"
 
+// Profile endpoints
+export const PROFILE_URL = API_URL + "/profile"
+export const PROFILE_PICTURE_URL = API_URL + "/profile/picture"
+
 // New feature endpoints
 export const CHAT_FILE_UPLOAD = API_URL + "/chats/upload"
 export const CHAT_VOICE_UPLOAD = API_URL + "/chats/voice"

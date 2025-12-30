@@ -193,8 +193,9 @@ export default function Chats({
         socket.on("userJoined", (user: GroupChatUserType) => {
             console.log("User joined:", user);
             setActiveUsers((prevUsers) => {
-                // Prevent duplicates
-                if (prevUsers.some(u => u.user_id === user.user_id)) {
+                // Prevent duplicates - check both user_id and id
+                const userId = user.user_id || user.id;
+                if (prevUsers.some(u => (u.user_id || u.id) === userId)) {
                     return prevUsers;
                 }
                 return [...prevUsers, user];
@@ -204,13 +205,25 @@ export default function Chats({
         socket.on("userLeft", (userId: string) => {
             console.log("User left:", userId);
             setActiveUsers((prevUsers: GroupChatUserType[]) =>
-                prevUsers.filter((user) => String(user.user_id) !== String(userId))
+                prevUsers.filter((user) => {
+                    const userIdentifier = String(user.user_id || user.id);
+                    return userIdentifier !== String(userId);
+                })
             );
         });
 
         socket.on("activeUsers", (users: GroupChatUserType[]) => {
             console.log("Active users received:", users);
-            setActiveUsers(users);
+            // Deduplicate users before setting - prefer user_id, fallback to id
+            const uniqueUsers = users.reduce((acc: GroupChatUserType[], user) => {
+                const userId = user.user_id || user.id;
+                const exists = acc.some(u => (u.user_id || u.id) === userId);
+                if (!exists) {
+                    acc.push(user);
+                }
+                return acc;
+            }, []);
+            setActiveUsers(uniqueUsers);
         });
 
         // Listen for online/offline status

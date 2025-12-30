@@ -1,5 +1,5 @@
 "use client"
-import React from 'react'
+import React, { useState } from 'react'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -12,8 +12,13 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { signOut } from "next-auth/react"
+import { Loader2 } from "lucide-react"
+
 function LogoutModal({ open, setOpen }: { open: boolean, setOpen: (open: boolean) => void }) {
+    const [loading, setLoading] = useState(false);
+
     const handleLogOut = async () => {
+        setLoading(true);
         await signOut({
             redirect: true,
             callbackUrl: "/"
@@ -30,8 +35,17 @@ function LogoutModal({ open, setOpen }: { open: boolean, setOpen: (open: boolean
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={handleLogOut}>Continue</AlertDialogAction>
+                        <AlertDialogCancel disabled={loading}>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleLogOut} disabled={loading}>
+                            {loading ? (
+                                <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Signing out...
+                                </>
+                            ) : (
+                                "Continue"
+                            )}
+                        </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>

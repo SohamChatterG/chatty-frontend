@@ -1,7 +1,7 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Trash2, ShieldCheck, Users, Circle } from "lucide-react";
+import { Trash2, ShieldCheck, Users, Circle, Loader2 } from "lucide-react";
 import { toast } from 'sonner';
 import { removeUser, makeAdmin } from "@/fetch/chatsFetch";
 import { CustomUser } from "@/app/api/auth/[...nextauth]/options";
@@ -27,8 +27,11 @@ export default function ChatSidebar({
 }) {
     const { theme } = useTheme();
     const isDark = theme === "dark";
+    const [loadingRemove, setLoadingRemove] = useState<string | null>(null);
+    const [loadingAdmin, setLoadingAdmin] = useState<string | null>(null);
 
     const handleRemoveUser = async (targetId: string) => {
+        setLoadingRemove(targetId);
         try {
             const targetUser = (users as GroupChatUserType[]).find(u => String(u?.id) === targetId);
             const response = await removeUser(
@@ -59,10 +62,13 @@ export default function ChatSidebar({
         } catch (error) {
             console.error(error);
             toast.error(error instanceof Error ? error.message : "Failed to remove user");
+        } finally {
+            setLoadingRemove(null);
         }
     };
 
     const handleMakeAdmin = async (targetId: string, is_admin: boolean) => {
+        setLoadingAdmin(targetId);
         try {
             await makeAdmin(
                 user.token as string,
@@ -83,6 +89,8 @@ export default function ChatSidebar({
         } catch (error) {
             console.error(error);
             toast.error(!is_admin ? "Failed to promote user to admin." : "Failed to demote user from admin.");
+        } finally {
+            setLoadingAdmin(null);
         }
     };
 
@@ -187,8 +195,13 @@ export default function ChatSidebar({
                                                     : "hover:bg-blue-50 text-blue-600"
                                                     }`}
                                                 title={member.is_admin ? "Remove admin" : "Make admin"}
+                                                disabled={loadingAdmin === String(member.id) || loadingRemove === String(member.id)}
                                             >
-                                                <ShieldCheck size={16} />
+                                                {loadingAdmin === String(member.id) ? (
+                                                    <Loader2 size={16} className="animate-spin" />
+                                                ) : (
+                                                    <ShieldCheck size={16} />
+                                                )}
                                             </button>
                                             {member.id !== Number(user?.id) && (
                                                 <button
@@ -198,8 +211,13 @@ export default function ChatSidebar({
                                                         : "hover:bg-red-50 text-red-600"
                                                         }`}
                                                     title="Remove user"
+                                                    disabled={loadingRemove === String(member.id) || loadingAdmin === String(member.id)}
                                                 >
-                                                    <Trash2 size={16} />
+                                                    {loadingRemove === String(member.id) ? (
+                                                        <Loader2 size={16} className="animate-spin" />
+                                                    ) : (
+                                                        <Trash2 size={16} />
+                                                    )}
                                                 </button>
                                             )}
                                         </div>

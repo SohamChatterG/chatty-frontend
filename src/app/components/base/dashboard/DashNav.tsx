@@ -6,7 +6,7 @@ import { Moon, Sun } from "lucide-react";
 import ProfileMenu from "../../auth/ProfileMenu";
 import { useTheme } from "@/contexts/ThemeContext";
 
-export function DashNav({ name, image }: { name: string; image?: string | null }) {
+export function DashNav({ name, image, token }: { name: string; image?: string | null; token?: string }) {
     const [scrolled, setScrolled] = useState(false);
     const { theme, toggleTheme } = useTheme();
     const isDark = theme === "dark";
@@ -67,7 +67,7 @@ export function DashNav({ name, image }: { name: string; image?: string | null }
                         )}
                     </motion.div>
                 </motion.button>
-                <ProfileMenu name={name} image={image} />
+                <ProfileMenu name={name} image={image} token={token} />
             </div>
         </motion.nav>
     );

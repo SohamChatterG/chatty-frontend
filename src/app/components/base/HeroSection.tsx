@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { MessageCircle, Sparkles, Zap, Shield } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { MessageCircle, Sparkles, Zap, Shield, Loader2 } from "lucide-react";
 
 const floatingAnimation = {
     initial: { y: 0 },
@@ -41,6 +41,8 @@ const fadeInUp = {
 
 export default function HeroSection() {
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+    const [isNavigating, setIsNavigating] = useState(false);
+    const router = useRouter();
 
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
@@ -170,12 +172,26 @@ export default function HeroSection() {
                     variants={fadeInUp}
                     className="flex flex-col sm:flex-row gap-4 justify-center items-center"
                 >
-                    <Link href="/dashboard">
-                        <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.98 }}>
-                            <Button
-                                size="lg"
-                                className="group relative px-8 py-6 text-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl shadow-xl shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-all duration-300"
-                            >
+                    <motion.div 
+                        whileHover={{ scale: isNavigating ? 1 : 1.05, y: isNavigating ? 0 : -2 }} 
+                        whileTap={{ scale: isNavigating ? 1 : 0.98 }}
+                    >
+                        <Button
+                            size="lg"
+                            disabled={isNavigating}
+                            onClick={() => {
+                                if (isNavigating) return;
+                                setIsNavigating(true);
+                                router.push("/dashboard");
+                            }}
+                            className="group relative px-8 py-6 text-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl shadow-xl shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-all duration-300 disabled:opacity-80"
+                        >
+                            {isNavigating ? (
+                                <span className="flex items-center gap-2">
+                                    <Loader2 className="w-5 h-5 animate-spin" />
+                                    Loading...
+                                </span>
+                            ) : (
                                 <span className="flex items-center gap-2">
                                     Start Chatting
                                     <motion.span
@@ -185,11 +201,11 @@ export default function HeroSection() {
                                         →
                                     </motion.span>
                                 </span>
-                            </Button>
-                        </motion.div>
-                    </Link>
+                            )}
+                        </Button>
+                    </motion.div>
 
-                    <Link href="#features">
+                    <a href="#features">
                         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
                             <Button
                                 size="lg"
@@ -199,7 +215,7 @@ export default function HeroSection() {
                                 Learn More
                             </Button>
                         </motion.div>
-                    </Link>
+                    </a>
                 </motion.div>
 
                 {/* Stats */}

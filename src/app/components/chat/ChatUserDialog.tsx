@@ -10,6 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useParams } from "next/navigation";
+import { Loader2 } from "lucide-react";
 import axios from "axios";
 import { CHAT_GROUP_USERS_URL } from "@/lib/apiEndpoints";
 import { toast } from "sonner";
@@ -34,6 +35,7 @@ export default function ChatUserDialog({
     setChatUser: Dispatch<SetStateAction<GroupChatUserType | undefined>>;
 }) {
     const params = useParams();
+    const [loading, setLoading] = useState(false);
     const [state, setState] = useState({
         name: "",
         passcode: "",
@@ -67,6 +69,7 @@ export default function ChatUserDialog({
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
+        setLoading(true);
         console.log(`[${new Date().toISOString()}] ChatUserDialog handleSubmit - starting`);
         console.log(`[${new Date().toISOString()}] ChatUserDialog handleSubmit - user:`, user);
         console.log(`[${new Date().toISOString()}] ChatUserDialog handleSubmit - state:`, state);
@@ -113,6 +116,7 @@ export default function ChatUserDialog({
             } catch (error) {
                 console.log(`[${new Date().toISOString()}] ChatUserDialog handleSubmit - error:`, error);
                 toast.error("Something went wrong. Please try again!");
+                setLoading(false);
                 return;
             }
         }
@@ -120,6 +124,7 @@ export default function ChatUserDialog({
         // Check passcode for private groups
         if (group?.passcode && group?.passcode !== state.passcode) {
             toast.error("Please enter correct passcode!");
+            setLoading(false);
             return;
         }
 
@@ -138,6 +143,8 @@ export default function ChatUserDialog({
         } catch (error) {
             console.error("Error fetching group users:", error);
             toast.error("Failed to update group users. Please try again!");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -156,6 +163,7 @@ export default function ChatUserDialog({
                             placeholder="Enter your name"
                             value={state.name}
                             onChange={(e) => setState({ ...state, name: e.target.value })}
+                            disabled={loading}
                         />
                     </div>
                     {!group.is_public && (
@@ -164,11 +172,21 @@ export default function ChatUserDialog({
                                 placeholder="Enter your passcode"
                                 value={state.passcode}
                                 onChange={(e) => setState({ ...state, passcode: e.target.value })}
+                                disabled={loading}
                             />
                         </div>
                     )}
                     <div className="mt-2">
-                        <Button className="w-full">Submit</Button>
+                        <Button className="w-full" disabled={loading}>
+                            {loading ? (
+                                <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Joining...
+                                </>
+                            ) : (
+                                "Submit"
+                            )}
+                        </Button>
                     </div>
                 </form>
             </DialogContent>

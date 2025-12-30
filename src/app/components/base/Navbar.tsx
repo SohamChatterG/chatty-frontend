@@ -1,13 +1,17 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import LoginModal from "../auth/LoginModal";
 import { CustomUser } from "@/app/api/auth/[...nextauth]/options";
 import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 
 export default function Navbar({ user }: { user: CustomUser | null }) {
     const [scrolled, setScrolled] = useState(false);
+    const [isNavigatingToDashboard, setIsNavigatingToDashboard] = useState(false);
+    const router = useRouter();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -16,6 +20,13 @@ export default function Navbar({ user }: { user: CustomUser | null }) {
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
+
+    const handleDashboardClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        if (isNavigatingToDashboard) return;
+        setIsNavigatingToDashboard(true);
+        router.push("/dashboard");
+    };
 
     return (
         <motion.nav
@@ -64,14 +75,23 @@ export default function Navbar({ user }: { user: CustomUser | null }) {
                     <LoginModal />
                 ) : (
                     <motion.div
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
+                        whileHover={{ scale: isNavigatingToDashboard ? 1 : 1.05 }}
+                        whileTap={{ scale: isNavigatingToDashboard ? 1 : 0.95 }}
                     >
-                        <Link href="/dashboard">
-                            <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-all">
-                                Dashboard
-                            </Button>
-                        </Link>
+                        <Button 
+                            onClick={handleDashboardClick}
+                            disabled={isNavigatingToDashboard}
+                            className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-all"
+                        >
+                            {isNavigatingToDashboard ? (
+                                <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Loading...
+                                </>
+                            ) : (
+                                "Dashboard"
+                            )}
+                        </Button>
                     </motion.div>
                 )}
             </div>

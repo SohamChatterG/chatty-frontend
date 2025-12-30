@@ -4,13 +4,14 @@ import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
 import { CustomUser } from "@/app/api/auth/[...nextauth]/options";
 import GroupChatCardMenu from "./GroupChatCardMenu";
 import { useRouter } from "next/navigation";
-import { Lock, Globe, Users, Calendar } from "lucide-react";
+import { Lock, Globe, Users, Calendar, Loader2 } from "lucide-react";
 import { ChatGroupType } from "@/types";
 import { useTheme } from "@/contexts/ThemeContext";
 
 export function GroupChatCard({ group, user }: { group: ChatGroupType; user: CustomUser }) {
     const router = useRouter();
     const [isHovered, setIsHovered] = useState(false);
+    const [isNavigating, setIsNavigating] = useState(false);
     const { theme } = useTheme();
     const isDark = theme === "dark";
 
@@ -40,6 +41,11 @@ export function GroupChatCard({ group, user }: { group: ChatGroupType; user: Cus
         if ((e.target as HTMLElement).closest('[data-menu]')) {
             return;
         }
+        // Prevent double-click/multiple requests
+        if (isNavigating) {
+            return;
+        }
+        setIsNavigating(true);
         router.push(`/chat/${group.id}`);
     };
 
@@ -60,22 +66,31 @@ export function GroupChatCard({ group, user }: { group: ChatGroupType; user: Cus
             {/* Glow effect */}
             <div
                 className={`absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500 ${group.is_public
-                        ? "bg-gradient-to-br from-green-400 to-emerald-500"
-                        : "bg-gradient-to-br from-purple-500 to-pink-500"
+                    ? "bg-gradient-to-br from-green-400 to-emerald-500"
+                    : "bg-gradient-to-br from-purple-500 to-pink-500"
                     }`}
             />
 
             {/* Card content */}
             <div
                 className={`relative p-6 rounded-2xl border transition-all duration-300 shadow-xl hover:shadow-2xl backdrop-blur-sm ${isDark
-                        ? group.is_public
-                            ? "bg-gradient-to-br from-slate-800 to-slate-900 border-green-500/20 hover:border-green-500/50"
-                            : "bg-gradient-to-br from-slate-800 to-slate-900 border-purple-500/20 hover:border-purple-500/50"
-                        : group.is_public
-                            ? "bg-gradient-to-br from-white to-green-50 border-green-300/40 hover:border-green-400/70"
-                            : "bg-gradient-to-br from-white to-purple-50 border-purple-300/40 hover:border-purple-400/70"
+                    ? group.is_public
+                        ? "bg-gradient-to-br from-slate-800 to-slate-900 border-green-500/20 hover:border-green-500/50"
+                        : "bg-gradient-to-br from-slate-800 to-slate-900 border-purple-500/20 hover:border-purple-500/50"
+                    : group.is_public
+                        ? "bg-gradient-to-br from-white to-green-50 border-green-300/40 hover:border-green-400/70"
+                        : "bg-gradient-to-br from-white to-purple-50 border-purple-300/40 hover:border-purple-400/70"
                     }`}
             >
+                {/* Loading overlay */}
+                {isNavigating && (
+                    <div className="absolute inset-0 rounded-2xl bg-black/30 backdrop-blur-sm flex items-center justify-center z-20">
+                        <div className="flex flex-col items-center gap-2">
+                            <Loader2 className="w-8 h-8 animate-spin text-white" />
+                            <span className="text-white text-sm font-medium">Opening chat...</span>
+                        </div>
+                    </div>
+                )}
                 {/* Header */}
                 <div className="flex justify-between items-start mb-4">
                     <div className="flex-1">
@@ -90,8 +105,8 @@ export function GroupChatCard({ group, user }: { group: ChatGroupType; user: Cus
                                 <>
                                     <div
                                         className={`flex items-center gap-1 px-2 py-1 rounded-full ${isDark
-                                                ? "bg-green-500/20"
-                                                : "bg-green-100 border border-green-300"
+                                            ? "bg-green-500/20"
+                                            : "bg-green-100 border border-green-300"
                                             }`}
                                     >
                                         <Globe
@@ -110,8 +125,8 @@ export function GroupChatCard({ group, user }: { group: ChatGroupType; user: Cus
                                 <>
                                     <div
                                         className={`flex items-center gap-1 px-2 py-1 rounded-full ${isDark
-                                                ? "bg-purple-500/20"
-                                                : "bg-purple-100 border border-purple-300"
+                                            ? "bg-purple-500/20"
+                                            : "bg-purple-100 border border-purple-300"
                                             }`}
                                     >
                                         <Lock
@@ -157,8 +172,8 @@ export function GroupChatCard({ group, user }: { group: ChatGroupType; user: Cus
                     {group.passcode && !group.is_public && (
                         <div
                             className={`flex items-center gap-1 px-2 py-1 rounded ${isDark
-                                    ? "bg-slate-700/50"
-                                    : "bg-purple-100 border border-purple-200"
+                                ? "bg-slate-700/50"
+                                : "bg-purple-100 border border-purple-200"
                                 }`}
                         >
                             <Lock className="w-3 h-3" />
