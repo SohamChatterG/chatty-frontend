@@ -223,7 +223,7 @@ export default function MobileChatSidebar({
                         </h3>
                         {activeUsers?.length > 0 ? (
                             // Deduplicate activeUsers by user_id or id
-                            [...new Map(activeUsers.map(u => [u.user_id || u.id, u])).values()].map((user) => (
+                            [...new Map(activeUsers.map((u): [string | number, GroupChatUserType] => [u.user_id || u.id, u])).values()].map((user) => (
                                 <div
                                     key={`online-${user.user_id || user.id}`}
                                     className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-200 ${isDark
