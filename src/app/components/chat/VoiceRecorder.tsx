@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { Mic, Square, Send, Trash2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CHAT_VOICE_UPLOAD } from "@/lib/apiEndpoints";
+import { v4 as uuidv4 } from "uuid";
 
 interface VoiceRecorderProps {
     groupId: string;
@@ -132,7 +133,19 @@ export default function VoiceRecorder({
             }
 
             const data = await response.json();
-            onVoiceSent(data.data);
+            
+            // Construct complete message object
+            const voiceMessage = {
+                ...data.data,
+                id: uuidv4(),
+                group_id: groupId,
+                name: userName,
+                user_id: userId,
+                created_at: new Date().toISOString(),
+                message: null,
+            };
+            
+            onVoiceSent(voiceMessage);
 
             // Reset state
             setAudioBlob(null);
