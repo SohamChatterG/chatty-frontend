@@ -162,8 +162,8 @@ function ChatBaseContent({
                 {/* Sidebar - Always visible on large screens */}
                 <div
                     className={`${isMediumScreen ? "w-80" : "hidden"} ${isDark
-                            ? "bg-slate-800/50 border-r border-slate-700/50"
-                            : "bg-white/80 border-r border-gray-200/50"
+                        ? "bg-slate-800/50 border-r border-slate-700/50"
+                        : "bg-white/80 border-r border-gray-200/50"
                         } backdrop-blur-xl shadow-xl flex-shrink-0 transition-colors duration-300 relative z-10`}
                 >
                     <div className="h-full flex flex-col">
@@ -192,7 +192,7 @@ function ChatBaseContent({
                                     {isNavigatingBack ? "Loading..." : "Back to Dashboard"}
                                 </span>
                             </motion.button>
-                            
+
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
                                     <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500 via-pink-500 to-indigo-500 flex items-center justify-center text-white font-bold text-lg shadow-lg">
@@ -245,8 +245,8 @@ function ChatBaseContent({
                     {!isMediumScreen && (
                         <div
                             className={`border-b backdrop-blur-xl ${isDark
-                                    ? "border-slate-700/50 bg-slate-800/80"
-                                    : "border-gray-200 bg-white/80"
+                                ? "border-slate-700/50 bg-slate-800/80"
+                                : "border-gray-200 bg-white/80"
                                 }`}
                         >
                             <ChatNav

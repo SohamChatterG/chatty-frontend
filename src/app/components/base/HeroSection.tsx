@@ -172,8 +172,8 @@ export default function HeroSection() {
                     variants={fadeInUp}
                     className="flex flex-col sm:flex-row gap-4 justify-center items-center"
                 >
-                    <motion.div 
-                        whileHover={{ scale: isNavigating ? 1 : 1.05, y: isNavigating ? 0 : -2 }} 
+                    <motion.div
+                        whileHover={{ scale: isNavigating ? 1 : 1.05, y: isNavigating ? 0 : -2 }}
                         whileTap={{ scale: isNavigating ? 1 : 0.98 }}
                     >
                         <Button

@@ -38,6 +38,7 @@ export default function Chats({
     const params = useParams();
     const router = useRouter();
     const [isTyping, setIsTyping] = useState(false);
+    const [isRecording, setIsRecording] = useState(false); // Add recording state
     const [message, setMessage] = useState("");
     const [mentions, setMentions] = useState<string[]>([]);
     const [messages, setMessages] = useState<Array<MessageType>>(oldMessages);
@@ -825,41 +826,46 @@ export default function Chats({
 
             {/* Input Area */}
             <form onSubmit={handleSubmit} className="mt-4 flex gap-1 sm:gap-2 items-center px-1 sm:px-0">
-                <FileUpload onFileUploaded={handleFileUploaded} />
+                {!isRecording && <FileUpload onFileUploaded={handleFileUploaded} />}
                 <VoiceRecorder
                     groupId={group.id}
                     userName={chatUser?.name || "Unknown"}
                     userId={chatUser?.user_id}
                     onVoiceSent={handleVoiceSent}
+                    onRecordingStateChange={setIsRecording}
                 />
-                <input
-                    type="text"
-                    placeholder="Type a message..."
-                    value={message}
-                    className="flex-1 min-w-0 p-2 sm:p-3 text-sm sm:text-base rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-white shadow-sm"
-                    onChange={(e) => {
-                        setMessage(e.target.value);
-                        // Extract mentions from the message
-                        const mentionRegex = /@(\w+)/g;
-                        const foundMentions: string[] = [];
-                        let match;
-                        while ((match = mentionRegex.exec(e.target.value)) !== null) {
-                            const mentionedUser = users.find(
-                                (u) => u.name.toLowerCase() === match![1].toLowerCase()
-                            );
-                            if (mentionedUser?.user_id) {
-                                foundMentions.push(mentionedUser.user_id.toString());
-                            }
-                        }
-                        setMentions(foundMentions);
-                    }}
-                />
-                <button
-                    type="submit"
-                    className="p-2 sm:p-3 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md hover:shadow-lg transition-all flex-shrink-0"
-                >
-                    <SendIcon size={18} />
-                </button>
+                {!isRecording && (
+                    <>
+                        <input
+                            type="text"
+                            placeholder="Type a message..."
+                            value={message}
+                            className="flex-1 min-w-0 p-2 sm:p-3 text-sm sm:text-base rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent bg-white shadow-sm"
+                            onChange={(e) => {
+                                setMessage(e.target.value);
+                                // Extract mentions from the message
+                                const mentionRegex = /@(\w+)/g;
+                                const foundMentions: string[] = [];
+                                let match;
+                                while ((match = mentionRegex.exec(e.target.value)) !== null) {
+                                    const mentionedUser = users.find(
+                                        (u) => u.name.toLowerCase() === match![1].toLowerCase()
+                                    );
+                                    if (mentionedUser?.user_id) {
+                                        foundMentions.push(mentionedUser.user_id.toString());
+                                    }
+                                }
+                                setMentions(foundMentions);
+                            }}
+                        />
+                        <button
+                            type="submit"
+                            className="p-2 sm:p-3 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md hover:shadow-lg transition-all flex-shrink-0"
+                        >
+                            <SendIcon size={18} />
+                        </button>
+                    </>
+                )}
             </form>
         </div>
     );

@@ -26,7 +26,7 @@ function CreateChat({ user }: { user?: CustomUser }) {
 
   const validateForm = () => {
     const newErrors: { title?: string; passcode?: string } = {};
-    
+
     // Validate title
     if (!title.trim()) {
       newErrors.title = "Chat title is required.";
@@ -51,7 +51,7 @@ function CreateChat({ user }: { user?: CustomUser }) {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -65,7 +65,7 @@ function CreateChat({ user }: { user?: CustomUser }) {
         user_id: user?.id,
         is_public: isPublic
       };
-      
+
       const { data } = await axios.post(CHAT_GROUP_URL, payload, {
         headers: {
           authorization: user?.token
@@ -120,8 +120,8 @@ function CreateChat({ user }: { user?: CustomUser }) {
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                 Chat Title
               </label>
-              <Input 
-                placeholder="Enter chat title" 
+              <Input
+                placeholder="Enter chat title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 disabled={loading}
@@ -140,11 +140,10 @@ function CreateChat({ user }: { user?: CustomUser }) {
                     setIsPublic(false);
                     setErrors(prev => ({ ...prev, passcode: undefined }));
                   }}
-                  className={`flex-1 flex items-center justify-center gap-2 p-4 rounded-xl border-2 transition-all duration-200 ${
-                    !isPublic 
-                      ? 'border-purple-500 bg-purple-50 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300' 
+                  className={`flex-1 flex items-center justify-center gap-2 p-4 rounded-xl border-2 transition-all duration-200 ${!isPublic
+                      ? 'border-purple-500 bg-purple-50 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300'
                       : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 text-slate-600 dark:text-slate-400'
-                  }`}
+                    }`}
                 >
                   <Lock className="w-5 h-5" />
                   <span className="font-medium">Private</span>
@@ -156,11 +155,10 @@ function CreateChat({ user }: { user?: CustomUser }) {
                     setPasscode('');
                     setErrors(prev => ({ ...prev, passcode: undefined }));
                   }}
-                  className={`flex-1 flex items-center justify-center gap-2 p-4 rounded-xl border-2 transition-all duration-200 ${
-                    isPublic 
-                      ? 'border-green-500 bg-green-50 dark:bg-green-500/20 text-green-700 dark:text-green-300' 
+                  className={`flex-1 flex items-center justify-center gap-2 p-4 rounded-xl border-2 transition-all duration-200 ${isPublic
+                      ? 'border-green-500 bg-green-50 dark:bg-green-500/20 text-green-700 dark:text-green-300'
                       : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 text-slate-600 dark:text-slate-400'
-                  }`}
+                    }`}
                 >
                   <Globe className="w-5 h-5" />
                   <span className="font-medium">Public</span>
@@ -173,8 +171,8 @@ function CreateChat({ user }: { user?: CustomUser }) {
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                   Passcode
                 </label>
-                <Input 
-                  placeholder="Enter passcode (min 4 characters)" 
+                <Input
+                  placeholder="Enter passcode (min 4 characters)"
                   value={passcode}
                   onChange={(e) => setPasscode(e.target.value)}
                   disabled={loading}

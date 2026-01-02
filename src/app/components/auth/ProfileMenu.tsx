@@ -17,15 +17,15 @@ import ProfileModal from './ProfileModal'
 function ProfileMenu({ name, image, token }: { name: string, image?: string | null, token?: string }) {
     const [logoutOpen, setLogoutOpen] = useState(false)
     const [profileOpen, setProfileOpen] = useState(false)
-    
+
     return (
         <>
             {/* {logoutOpen && <Suspense fallback={<p>Wait Bro, what's the rush?...</p>}> */}
             <LogoutModal open={logoutOpen} setOpen={setLogoutOpen} />
             {token && (
-                <ProfileModal 
-                    open={profileOpen} 
-                    setOpen={setProfileOpen} 
+                <ProfileModal
+                    open={profileOpen}
+                    setOpen={setProfileOpen}
                     token={token}
                     initialData={{ name, image }}
                 />

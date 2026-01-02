@@ -190,7 +190,7 @@ export default function ProfileModal({
                                         <User className="w-12 h-12 text-white" />
                                     )}
                                 </div>
-                                
+
                                 {/* Upload/Remove overlay */}
                                 <div className="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                                     {uploadingImage ? (
@@ -214,7 +214,7 @@ export default function ProfileModal({
                                         </>
                                     )}
                                 </div>
-                                
+
                                 <input
                                     ref={fileInputRef}
                                     type="file"
@@ -298,7 +298,7 @@ export default function ProfileModal({
                                         <Edit2 className="w-4 h-4 text-gray-600" />
                                     </button>
                                 </div>
-                                
+
                                 <div className="flex items-start justify-between p-3 bg-gray-50 rounded-lg">
                                     <div className="flex-1">
                                         <p className="text-xs text-gray-500 uppercase tracking-wide">About</p>
@@ -313,7 +313,7 @@ export default function ProfileModal({
                                         <Edit2 className="w-4 h-4 text-gray-600" />
                                     </button>
                                 </div>
-                                
+
                                 <div className="p-3 bg-gray-50 rounded-lg">
                                     <p className="text-xs text-gray-500 uppercase tracking-wide">Email</p>
                                     <p className="text-sm text-gray-700">{profile?.email}</p>

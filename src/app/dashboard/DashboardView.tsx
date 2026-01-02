@@ -47,7 +47,7 @@ function DashboardContent({
     const filteredGroups = useMemo(() => {
         if (!searchQuery.trim()) return groups;
         const query = searchQuery.toLowerCase().trim();
-        return groups.filter(group => 
+        return groups.filter(group =>
             group.title.toLowerCase().includes(query)
         );
     }, [groups, searchQuery]);
@@ -55,8 +55,8 @@ function DashboardContent({
     return (
         <div
             className={`min-h-screen relative overflow-hidden transition-colors duration-500 ${isDark
-                    ? "bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900"
-                    : "bg-gradient-to-br from-slate-50 via-purple-50 to-pink-50"
+                ? "bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900"
+                : "bg-gradient-to-br from-slate-50 via-purple-50 to-pink-50"
                 }`}
         >
             {/* Animated background elements */}
@@ -105,8 +105,8 @@ function DashboardContent({
             {/* Grid Pattern */}
             <div
                 className={`absolute inset-0 ${isDark
-                        ? "bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)]"
-                        : "bg-[linear-gradient(to_right,#00000008_1px,transparent_1px),linear-gradient(to_bottom,#00000008_1px,transparent_1px)]"
+                    ? "bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)]"
+                    : "bg-[linear-gradient(to_right,#00000008_1px,transparent_1px),linear-gradient(to_bottom,#00000008_1px,transparent_1px)]"
                     } bg-[size:32px_32px]`}
             />
 
@@ -124,15 +124,15 @@ function DashboardContent({
                         <div>
                             <h1
                                 className={`text-4xl md:text-5xl font-bold mb-2 bg-gradient-to-r ${isDark
-                                        ? "from-white via-purple-200 to-pink-200"
-                                        : "from-slate-900 via-purple-600 to-pink-600"
+                                    ? "from-white via-purple-200 to-pink-200"
+                                    : "from-slate-900 via-purple-600 to-pink-600"
                                     } bg-clip-text text-transparent`}
                             >
                                 Your Chats
                             </h1>
                             <p className={isDark ? "text-gray-400" : "text-gray-600"}>
                                 {filteredGroups.length}{" "}
-                                {filteredGroups.length === 1 ? "conversation" : "conversations"} 
+                                {filteredGroups.length === 1 ? "conversation" : "conversations"}
                                 {searchQuery && ` found`}
                                 {!searchQuery && ` active`}
                             </p>
@@ -159,10 +159,10 @@ function DashboardContent({
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                     placeholder="Search your chats..."
-                                    className={`w-full pl-12 pr-10 py-3 rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 ${isDark 
-                                        ? "bg-slate-800/50 border-slate-700 text-white placeholder-gray-400 focus:ring-purple-500/50 focus:border-purple-500/50" 
+                                    className={`w-full pl-12 pr-10 py-3 rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 ${isDark
+                                        ? "bg-slate-800/50 border-slate-700 text-white placeholder-gray-400 focus:ring-purple-500/50 focus:border-purple-500/50"
                                         : "bg-white border-gray-200 text-gray-900 placeholder-gray-500 focus:ring-purple-500/30 focus:border-purple-400"
-                                    }`}
+                                        }`}
                                 />
                                 {searchQuery && (
                                     <button
@@ -218,10 +218,10 @@ function DashboardContent({
                                 onClick={() => setSearchQuery("")}
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
-                                className={`px-6 py-2 rounded-lg transition-colors ${isDark 
-                                    ? "bg-slate-700 hover:bg-slate-600 text-white" 
+                                className={`px-6 py-2 rounded-lg transition-colors ${isDark
+                                    ? "bg-slate-700 hover:bg-slate-600 text-white"
                                     : "bg-gray-200 hover:bg-gray-300 text-gray-800"
-                                }`}
+                                    }`}
                             >
                                 Clear Search
                             </motion.button>

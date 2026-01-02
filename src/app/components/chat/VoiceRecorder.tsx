@@ -10,6 +10,7 @@ interface VoiceRecorderProps {
     userName: string;
     userId?: number;
     onVoiceSent: (message: any) => void;
+    onRecordingStateChange?: (isRecordingOrReviewing: boolean) => void;
 }
 
 export default function VoiceRecorder({
@@ -17,6 +18,7 @@ export default function VoiceRecorder({
     userName,
     userId,
     onVoiceSent,
+    onRecordingStateChange,
 }: VoiceRecorderProps) {
     const [isRecording, setIsRecording] = useState(false);
     const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
@@ -27,10 +29,19 @@ export default function VoiceRecorder({
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const chunksRef = useRef<Blob[]>([]);
     const timerRef = useRef<NodeJS.Timeout | null>(null);
+    const streamRef = useRef<MediaStream | null>(null);
+
+    // Notify parent of state changes
+    const updateParentState = (recording: boolean, hasAudio: boolean) => {
+        if (onRecordingStateChange) {
+            onRecordingStateChange(recording || hasAudio);
+        }
+    };
 
     const startRecording = async () => {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            streamRef.current = stream;
             const mediaRecorder = new MediaRecorder(stream);
             mediaRecorderRef.current = mediaRecorder;
             chunksRef.current = [];
@@ -45,11 +56,14 @@ export default function VoiceRecorder({
                 const blob = new Blob(chunksRef.current, { type: "audio/webm" });
                 setAudioBlob(blob);
                 setAudioUrl(URL.createObjectURL(blob));
+                updateParentState(false, true); // Not recording, but has audio
                 stream.getTracks().forEach((track) => track.stop());
+                streamRef.current = null;
             };
 
             mediaRecorder.start();
             setIsRecording(true);
+            updateParentState(true, false); // Recording
             setDuration(0);
 
             // Start timer
@@ -66,6 +80,7 @@ export default function VoiceRecorder({
         if (mediaRecorderRef.current && isRecording) {
             mediaRecorderRef.current.stop();
             setIsRecording(false);
+            // updateParentState is called in onstop
             if (timerRef.current) {
                 clearInterval(timerRef.current);
             }
@@ -73,12 +88,24 @@ export default function VoiceRecorder({
     };
 
     const cancelRecording = () => {
-        if (isRecording) {
-            stopRecording();
+        if (isRecording && mediaRecorderRef.current) {
+            mediaRecorderRef.current.onstop = null; // Prevent onstop from firing
+            mediaRecorderRef.current.stop();
+            setIsRecording(false);
+            if (timerRef.current) {
+                clearInterval(timerRef.current);
+            }
         }
+
+        if (streamRef.current) {
+            streamRef.current.getTracks().forEach((track) => track.stop());
+            streamRef.current = null;
+        }
+
         setAudioBlob(null);
         setAudioUrl(null);
         setDuration(0);
+        updateParentState(false, false); // Reset
     };
 
     const sendVoiceMessage = async () => {
@@ -111,6 +138,7 @@ export default function VoiceRecorder({
             setAudioBlob(null);
             setAudioUrl(null);
             setDuration(0);
+            updateParentState(false, false); // Reset parent state
         } catch (error) {
             console.error("Error sending voice message:", error);
             alert("Failed to send voice message");

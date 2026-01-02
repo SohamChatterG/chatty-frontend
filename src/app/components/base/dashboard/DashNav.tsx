@@ -25,17 +25,17 @@ export function DashNav({ name, image, token }: { name: string; image?: string |
             animate={{ y: 0 }}
             transition={{ type: "spring", stiffness: 100, damping: 20 }}
             className={`sticky top-0 z-50 p-6 flex justify-between items-center transition-all duration-300 ${scrolled
-                    ? isDark
-                        ? "bg-slate-900/80 backdrop-blur-lg shadow-lg border-b border-white/10"
-                        : "bg-white/80 backdrop-blur-lg shadow-lg border-b border-slate-200"
-                    : "bg-transparent"
+                ? isDark
+                    ? "bg-slate-900/80 backdrop-blur-lg shadow-lg border-b border-white/10"
+                    : "bg-white/80 backdrop-blur-lg shadow-lg border-b border-slate-200"
+                : "bg-transparent"
                 }`}
         >
             <Link href="/">
                 <motion.h1
                     className={`text-2xl md:text-3xl font-extrabold bg-gradient-to-r ${isDark
-                            ? "from-purple-400 via-pink-400 to-indigo-400"
-                            : "from-purple-600 via-pink-600 to-indigo-600"
+                        ? "from-purple-400 via-pink-400 to-indigo-400"
+                        : "from-purple-600 via-pink-600 to-indigo-600"
                         } bg-clip-text text-transparent cursor-pointer`}
                     whileHover={{ scale: 1.05 }}
                     transition={{ type: "spring", stiffness: 400 }}
