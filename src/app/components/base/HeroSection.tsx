@@ -4,6 +4,8 @@ import { motion, useMotionValue, useSpring } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { MessageCircle, Sparkles, Zap, Shield, Loader2 } from "lucide-react";
+import { CustomUser } from "@/app/api/auth/[...nextauth]/options";
+import LoginModal from "../auth/LoginModal";
 
 const floatingAnimation = {
     initial: { y: 0 },
@@ -39,7 +41,7 @@ const fadeInUp = {
     },
 };
 
-export default function HeroSection() {
+export default function HeroSection({ user }: { user: CustomUser | null }) {
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const [isNavigating, setIsNavigating] = useState(false);
     const router = useRouter();
@@ -70,6 +72,9 @@ export default function HeroSection() {
 
     return (
         <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-slate-50 via-white to-indigo-50 pt-20">
+            {isNavigating && (
+                <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-[2px] cursor-not-allowed" />
+            )}
             {/* Animated Background Elements */}
             <div className="absolute inset-0 overflow-hidden">
                 {/* Gradient Orbs with Cursor Following */}
@@ -176,33 +181,52 @@ export default function HeroSection() {
                         whileHover={{ scale: isNavigating ? 1 : 1.05, y: isNavigating ? 0 : -2 }}
                         whileTap={{ scale: isNavigating ? 1 : 0.98 }}
                     >
-                        <Button
-                            size="lg"
-                            disabled={isNavigating}
-                            onClick={() => {
-                                if (isNavigating) return;
-                                setIsNavigating(true);
-                                router.push("/dashboard");
-                            }}
-                            className="group relative px-8 py-6 text-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl shadow-xl shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-all duration-300 disabled:opacity-80"
-                        >
-                            {isNavigating ? (
-                                <span className="flex items-center gap-2">
-                                    <Loader2 className="w-5 h-5 animate-spin" />
-                                    Loading...
-                                </span>
-                            ) : (
-                                <span className="flex items-center gap-2">
-                                    Start Chatting
-                                    <motion.span
-                                        animate={{ x: [0, 4, 0] }}
-                                        transition={{ duration: 1.5, repeat: Infinity }}
-                                    >
-                                        →
-                                    </motion.span>
-                                </span>
-                            )}
-                        </Button>
+                        {user ? (
+                            <Button
+                                size="lg"
+                                disabled={isNavigating}
+                                onClick={() => {
+                                    if (isNavigating) return;
+                                    setIsNavigating(true);
+                                    router.push("/dashboard");
+                                }}
+                                className="group relative px-8 py-6 text-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl shadow-xl shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-all duration-300 disabled:opacity-80"
+                            >
+                                {isNavigating ? (
+                                    <span className="flex items-center gap-2">
+                                        <Loader2 className="w-5 h-5 animate-spin" />
+                                        Loading...
+                                    </span>
+                                ) : (
+                                    <span className="flex items-center gap-2">
+                                        Start Chatting
+                                        <motion.span
+                                            animate={{ x: [0, 4, 0] }}
+                                            transition={{ duration: 1.5, repeat: Infinity }}
+                                        >
+                                            →
+                                        </motion.span>
+                                    </span>
+                                )}
+                            </Button>
+                        ) : (
+                            <LoginModal>
+                                <Button
+                                    size="lg"
+                                    className="group relative px-8 py-6 text-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl shadow-xl shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-all duration-300 disabled:opacity-80"
+                                >
+                                    <span className="flex items-center gap-2">
+                                        Start Chatting
+                                        <motion.span
+                                            animate={{ x: [0, 4, 0] }}
+                                            transition={{ duration: 1.5, repeat: Infinity }}
+                                        >
+                                            →
+                                        </motion.span>
+                                    </span>
+                                </Button>
+                            </LoginModal>
+                        )}
                     </motion.div>
 
                     <a href="#features">

@@ -13,7 +13,7 @@ export default async function Home() {
       {/* Header */}
       <Navbar user={session?.user as CustomUser ?? null} />
       {/* Hero Section */}
-      <HeroSection />
+      <HeroSection user={session?.user as CustomUser ?? null} />
 
       {/* Features Section */}
       <FeatureSection />

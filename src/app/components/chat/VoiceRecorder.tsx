@@ -133,7 +133,7 @@ export default function VoiceRecorder({
             }
 
             const data = await response.json();
-            
+
             // Construct complete message object
             const voiceMessage = {
                 ...data.data,
@@ -144,7 +144,7 @@ export default function VoiceRecorder({
                 created_at: new Date().toISOString(),
                 message: null,
             };
-            
+
             onVoiceSent(voiceMessage);
 
             // Reset state

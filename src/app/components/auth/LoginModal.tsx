@@ -13,7 +13,7 @@ import { signIn } from "next-auth/react";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { Loader2 } from "lucide-react";
 
-export default function LoginModal() {
+export default function LoginModal({ children }: { children?: React.ReactNode }) {
     const [loading, setLoading] = useState(false);
 
     const handleGoogleLogin = async () => {
@@ -26,8 +26,11 @@ export default function LoginModal() {
 
     return (
         <Dialog>
+            {loading && (
+                <div className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-[2px] cursor-not-allowed" />
+            )}
             <DialogTrigger asChild>
-                <Button>Getting start</Button>
+                {children ?? <Button>Getting start</Button>}
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>

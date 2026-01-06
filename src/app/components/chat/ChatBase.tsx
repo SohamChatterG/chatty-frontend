@@ -146,9 +146,12 @@ function ChatBaseContent({
             token={session?.user?.token || ""}
             userId={session?.user?.id}
         >
+            {isNavigatingBack && (
+                <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-[2px] cursor-not-allowed" />
+            )}
             <div
                 className={`flex h-screen transition-colors duration-300 ${isDark
-                    ? "bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900"
+                    ? "bg-slate-900"
                     : "bg-gradient-to-br from-gray-50 via-purple-50/20 to-pink-50/20"
                     }`}
             >
